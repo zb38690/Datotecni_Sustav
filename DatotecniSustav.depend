@@ -1,0 +1,51 @@
+# depslib dependency file v1.0
+1487960426 source:/home/zdravko/Documents/codeblocks/projects/DatotecniSustav/Main.c
+	"disk_simulator.h"
+	<limits.h>
+	<time.h>
+
+1486062247 source:/home/zdravko/Documents/codeblocks/projects/DatotecniSustav/disk_simulator.c
+	"disk_simulator.h"
+
+1487008713 /home/zdravko/Documents/codeblocks/projects/DatotecniSustav/disk_simulator.h
+	<stdio.h>
+	<sys/stat.h>
+	<stdbool.h>
+	<unistd.h>
+	"global.h"
+
+1487008685 /home/zdravko/Documents/codeblocks/projects/DatotecniSustav/global.h
+
+1488649932 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/DatotecniSustav/disk_simulator.c
+	"disk_simulator.h"
+
+1488817326 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/DatotecniSustav/disk_simulator.h
+	<stdio.h>
+	<sys/stat.h>
+	<stdbool.h>
+	<unistd.h>
+	"global.h"
+
+1488817326 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/DatotecniSustav/global.h
+
+1488818184 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/DatotecniSustav/Main.c
+	"meni.h"
+	<limits.h>
+	<time.h>
+
+1488633996 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/DatotecniSustav/g_meni.c
+	"g_meni.h"
+
+1488634065 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/DatotecniSustav/g_meni.h
+	<stdio.h>
+
+1488818193 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/DatotecniSustav/meni.c
+	"meni.h"
+
+1488813811 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/DatotecniSustav/meni.h
+	<stdio.h>
+	<stdlib.h>
+	"global.h"
+	"disk_simulator.h"
+	<string.h>
+
