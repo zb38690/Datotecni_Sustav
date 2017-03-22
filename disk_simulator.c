@@ -16,12 +16,7 @@ void init_disk(char imediska[])
 
         if((prostor != NULL) && (prostor <= MAX_VELICINA))
         {
-            int i = 0;
-
-            for(i; imediska[i] != '\0'; i++)
-                {
-                    disk.ime[i] = imediska[i];
-                }
+            strcpy(disk.ime, imediska);
 
             disk.p_disk = fopen(disk.ime, "r+b");
             disk.poz_glave = 0;

@@ -35,10 +35,16 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="SuperBlock.h" />
+		<Unit filename="blokovni_tok.h" />
 		<Unit filename="disk_simulator.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="disk_simulator.h" />
+		<Unit filename="ds_adresa.h" />
+		<Unit filename="ds_disk_operacije.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="ds_disk_operacije.h" />
 		<Unit filename="global.h" />
 		<Unit filename="inode.h">
 			<Option target="&lt;{~None~}&gt;" />
@@ -47,6 +53,7 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="meni.h" />
+		<Unit filename="podatkovni_tok.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />

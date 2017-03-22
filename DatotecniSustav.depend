@@ -16,19 +16,19 @@
 
 1487008685 /home/zdravko/Documents/codeblocks/projects/DatotecniSustav/global.h
 
-1488649932 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/DatotecniSustav/disk_simulator.c
+1489240939 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/DatotecniSustav/disk_simulator.c
 	"disk_simulator.h"
 
-1488817326 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/DatotecniSustav/disk_simulator.h
+1489064173 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/DatotecniSustav/disk_simulator.h
 	<stdio.h>
 	<sys/stat.h>
 	<stdbool.h>
 	<unistd.h>
 	"global.h"
 
-1488817326 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/DatotecniSustav/global.h
+1489769790 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/DatotecniSustav/global.h
 
-1488818184 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/DatotecniSustav/Main.c
+1489240728 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/DatotecniSustav/Main.c
 	"meni.h"
 	<limits.h>
 	<time.h>
@@ -39,10 +39,10 @@
 1488634065 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/DatotecniSustav/g_meni.h
 	<stdio.h>
 
-1488818193 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/DatotecniSustav/meni.c
+1489240721 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/DatotecniSustav/meni.c
 	"meni.h"
 
-1488813811 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/DatotecniSustav/meni.h
+1489164971 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/DatotecniSustav/meni.h
 	<stdio.h>
 	<stdlib.h>
 	"global.h"

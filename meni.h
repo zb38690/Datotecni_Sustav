@@ -6,8 +6,8 @@
 #include "disk_simulator.h"
 #include <string.h>
 int g_meni();
-void meni_1();
-void meni_2();
+bool meni_1();
+bool meni_2();
 char *dohvati_ime_diska();
 bool datoteka_postoji(char*);
 void kreiraj_disk(char*);

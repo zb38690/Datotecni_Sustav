@@ -2,9 +2,8 @@
 #include <limits.h>
 #include <time.h>
 
-
 int main()
-{
+{/*
     if(g_meni() == 1)
     {
         meni_1();
@@ -15,7 +14,7 @@ int main()
         meni_2();
         uinit_disk();
     }
-
+*/
 
     /*rec nesto;
     rec bla;

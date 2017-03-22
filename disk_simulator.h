@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include "global.h"
-#define MAX_VELICINA 2199023255552LL
+#define MAX_VELICINA SEKTOR*4294967296LL
 
 typedef byte disk_blok[SEKTOR];
 

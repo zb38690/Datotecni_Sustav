@@ -23,51 +23,69 @@ int g_meni()
     return(x);
 }
 
-void meni_1()
+bool meni_1()
 {
     char *ime;
 
-    while(!isDiskInit())
+    while(!isDiskInit() && ime)
     {
         ime = dohvati_ime_diska();
         init_disk(ime);
     }
 
-    printf("Uspješna inicijalizacija diska...\n");
-    free(ime);
+    if(ime)
+    {
+        printf("Uspješna inicijalizacija diska...\n");
+        free(ime);
+        return true;
+    }
+    else
+    {
+        printf("Neuspješna inicializacija diska...\n");
+        return false;
+    }
+
 }
 
-void meni_2()
+bool meni_2()
 {
     char *ime;
 
     printf("Upišite željeno ime diska...\n");
     ime = dohvati_ime_diska();
 
-    while(datoteka_postoji(ime))
+    while(datoteka_postoji(ime) && ime)
     {
         printf("Datoteka postoji. Izaberite drugo ime.\n");
         ime = dohvati_ime_diska();
     }
+
+
+    if(!ime)
+    {
+        printf("Neuspješna inicializacija diska...\n");
+        return false;
+    }
     kreiraj_disk(ime);
     init_disk(ime);
     free(ime);
+    return true;
 }
 
 char* dohvati_ime_diska()
 {
     char c[MAX_CHAR_LENGTH];
-    char *ime;
-    int i = 0, j = 0;
+    char *ime = NULL;
     printf("Ime diska: ");
     fgets(c, sizeof(c), stdin);
 
-    for(i; c[i+1]!='\0'; i++)
-        ;
-    ime = (char *)malloc(i);
+    c[strlen(c)-1] = '\0';
+    ime = (char *)malloc(strlen(c));
 
-    for(j; j<i;j++)
-        ime[j] = c[j];
+    if(!ime)
+        return NULL;
+
+    strcpy(ime, c);
 
     return ime;
 }
