@@ -1,22 +1,41 @@
 #include "ds_disk_operacije.h"
 
-adresa dohvati_adresu(ds_adresa a)
+long dohvati_adresu(ds_adresa a)
 {
-    return (adresa)(a.alokacijska_grupa * a.poz);
+    return (a.alokacijska_grupa * a.poz);
 }
 
-void pisi_na_disk(ds_adresa a, ds_block b)
+long udaljenost(long adresa, long poz)
 {
-    adresa x = dohvati_adresu(a);
-    long long dest = pozicija();
+    return (adresa - poz);
+}
 
-    if(x < dest)
+void pisi_na_disk(ds_adresa a, ds_block dsb)
+{
+    long adresa = dohvati_adresu(a);
+    long poz = pozicija();
+    long odrediste = udaljenost(adresa, poz);
+    int i;
+    disk_blok db[SEKTOR_MULTIPLIER];
+
+    mempcpy(db, dsb, sizeof(dsb));
+
+    pisi(odrediste, db[0]);
+    for(i = 1; i < SEKTOR_MULTIPLIER; i++)
     {
-        int i;
-        disk_block db;
-        for(i = 0; i < (sizeof(ds_block) / sizeof(db); i++))
-        {
-
-        }
+        pisi(0, db[i]);
     }
+}
+
+ds_block *citaj_sa_diska(ds_adresa a)
+{
+    long adresa = dohvati_adresu(a);
+    long poz = pozicija();
+    long odrediste = udaljenost(adresa, poz);
+    int i;
+    disk_blok db[SEKTOR_MULTIPLIER];
+
+
+    ds_block x;
+    return x;
 }

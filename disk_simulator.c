@@ -14,7 +14,7 @@ void init_disk(char imediska[])
             prostor = NULL;
 
 
-        if((prostor != NULL) && (prostor <= MAX_VELICINA))
+        if((prostor != NULL) && (prostor <= LONG_MAX))
         {
             strcpy(disk.ime, imediska);
 
@@ -55,26 +55,26 @@ unsigned long long velicina()
         return NULL;
 }
 
-void citaj(unsigned long long poz, disk_blok* db)
+disk_blok *citaj(long poz)
 {
+    disk_blok db;
     if(disk.init)
     {
         fseek(disk.p_disk, sizeof(disk_blok) * poz, SEEK_CUR);
         fread(db, sizeof(disk_blok), 1, disk.p_disk);
-        fseek(disk.p_disk, sizeof(disk_blok) * (-1), SEEK_CUR);
-        disk.poz_glave = ((ftello64(disk.p_disk))/SEKTOR);;
+        disk.poz_glave = ((ftello64(disk.p_disk))/SEKTOR);
+        return db;
     }
     else
-        db = NULL;
+        return NULL;
 }
 
-void pisi(unsigned long long poz, disk_blok podatak)
+void pisi(long poz, disk_blok podatak)
 {
     if(disk.init)
     {
         fseek(disk.p_disk, sizeof(disk_blok) * poz, SEEK_CUR);
         fwrite(podatak, sizeof(disk_blok), 1, disk.p_disk);
-        fseek(disk.p_disk, sizeof(disk_blok) * (-1), SEEK_CUR);
         disk.poz_glave = ((ftello64(disk.p_disk))/SEKTOR);
     }
 }

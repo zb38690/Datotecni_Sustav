@@ -8,6 +8,5 @@
 #define SUPERBLOCK_MAGIC3 0x15B6830E
 #define INODE_MAGIC 0x3BBE0AD9
 typedef unsigned char byte;
-typedef unsigned int adresa;
 
 #endif // GLOBAL_H_INCLUDED

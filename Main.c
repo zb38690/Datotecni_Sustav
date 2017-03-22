@@ -3,7 +3,10 @@
 #include <time.h>
 
 int main()
-{/*
+{
+
+printf("%lli\n%llu\n", LONG_MAX, ULONG_MAX);
+/*
     if(g_meni() == 1)
     {
         meni_1();

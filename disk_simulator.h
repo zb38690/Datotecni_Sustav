@@ -4,8 +4,8 @@
 #include <sys/stat.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <limits.h>
 #include "global.h"
-#define MAX_VELICINA SEKTOR*4294967296LL
 
 typedef byte disk_blok[SEKTOR];
 
@@ -30,9 +30,9 @@ char* imediska();
 
 unsigned long long velicina();
 
-void citaj(unsigned long long poz, disk_blok* db);
+disk_blok *citaj(long poz);
 
-void pisi(unsigned long long poz, disk_blok podatak);
+void pisi(long poz, disk_blok podatak);
 
 unsigned long pozicija();
 #endif /*DISK_SIMULATOR_H*/
