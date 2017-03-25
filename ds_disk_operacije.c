@@ -18,7 +18,7 @@ void pisi_na_disk(ds_adresa a, ds_block dsb)
     int i;
     disk_blok db[SEKTOR_MULTIPLIER];
 
-    mempcpy(db, dsb, sizeof(dsb));
+    memcpy(db, dsb, sizeof(dsb));
 
     pisi(odrediste, db[0]);
     for(i = 1; i < SEKTOR_MULTIPLIER; i++)
@@ -31,11 +31,19 @@ ds_block *citaj_sa_diska(ds_adresa a)
 {
     long adresa = dohvati_adresu(a);
     long poz = pozicija();
-    long odrediste = udaljenost(adresa, poz);
+    long izvor = udaljenost(adresa, poz);
     int i;
     disk_blok db[SEKTOR_MULTIPLIER];
-
-
     ds_block x;
+
+    db[0] = citaj(izvor);
+
+    for(i = 1; i < SEKTOR_MULTIPLIER; i++)
+    {
+        db[i] = citaj(0);
+    }
+
+    memcpy(x, db, sizeof(x));
+
     return x;
 }
