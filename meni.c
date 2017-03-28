@@ -1,5 +1,5 @@
 #include "meni.h"
-#define MB_MULTIPLIER 2048
+#define MB_MULTIPLIER (1024*1024)/SEKTOR
 int g_meni()
 {
     int x;
@@ -102,7 +102,7 @@ void kreiraj_disk(char* ime)
 {
     char c[MAX_CHAR_LENGTH];
     char *ptr;
-    int x, i = 0;
+    int x, i;
     byte b[SEKTOR];
     FILE *fp;
 
@@ -111,23 +111,20 @@ void kreiraj_disk(char* ime)
 
     x = strtol(c, &ptr, 10);
 
-    while(x < 1 || x > 2048)
+    while(x < 2 || x > 2048)
     {
-        printf("Dozvoljeno samo između 1 i 2048...\nVeličina: ");
+        printf("Dozvoljeno samo između 2 i 2048...\nVeličina: ");
         fgets(c, sizeof(c), stdin);
         x = strtol(c, &ptr, 10);
     }
 
-    for(i; i<SEKTOR; i++)
+    for(i = 0; i < SEKTOR; i++)
         b[i] = 0;
 
 
     fp = fopen(ime, "wb");
 
-    i = 0;
-
-
-    for(i; i < (x*MB_MULTIPLIER); i++)
+    for(i = 0; i < (x*MB_MULTIPLIER); i++)
         fwrite(b, sizeof(b), 1, fp);
 
     fclose(fp);

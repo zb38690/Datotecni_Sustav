@@ -9,4 +9,5 @@
 #define INODE_MAGIC 0x3BBE0AD9
 typedef unsigned char byte;
 
+
 #endif // GLOBAL_H_INCLUDED

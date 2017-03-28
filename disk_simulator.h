@@ -30,7 +30,7 @@ char* imediska();
 
 unsigned long long velicina();
 
-disk_blok *citaj(long poz);
+void citaj(long poz, disk_blok *db);
 
 void pisi(long poz, disk_blok podatak);
 

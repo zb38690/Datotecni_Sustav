@@ -1,11 +1,12 @@
 #include "meni.h"
 #include <limits.h>
 #include <time.h>
+#include "ds_disk_operacije.h"
 
 int main()
 {
 
-printf("%lli\n%llu\n", LONG_MAX, ULONG_MAX);
+//printf("%lli\n%llu\n", LONG_MAX, ULONG_MAX);
 /*
     if(g_meni() == 1)
     {
@@ -18,6 +19,48 @@ printf("%lli\n%llu\n", LONG_MAX, ULONG_MAX);
         uinit_disk();
     }
 */
+    init_disk("blablabla");
+
+    superblock sb, bs;
+    ds_adresa dsa;
+    ds_block dsb;
+    char c[29] = "Jednostavni Datotecni Sustav\0";
+    int i;
+    strcpy(sb.ds_ime, c);
+
+
+    sb.magic1 = SUPERBLOCK_MAGIC1;
+    sb.magic2 = SUPERBLOCK_MAGIC2;
+    sb.magic3 = SUPERBLOCK_MAGIC3;
+    sb.velicina_bloka = SEKTOR*SEKTOR_MULTIPLIER;
+    sb.blok_shift = log2(SEKTOR);
+    sb.br_blokova = velicina()/sb.velicina_bloka;
+    sb.koristeni_blokovi = 1;
+
+    dsa.alokacijska_grupa = 0;
+    dsa.poz = 0;
+
+    memcpy(dsb, &sb, sizeof(superblock));
+
+    pisi_na_disk(dsa, &dsb);
+
+
+    citaj_sa_diska(dsa, &dsb);
+
+    memcpy(&bs, dsb, sizeof(superblock));
+
+    printf("ime:               %s\n", bs.ds_ime);
+    printf("magic1:            %x\n", bs.magic1);
+    printf("magic2:            %x\n", bs.magic2);
+    printf("magic3:            %x\n", bs.magic3);
+    printf("velicina bloka:    %d\n", bs.velicina_bloka);
+    printf("koristeni blokovi: %d\n", bs.koristeni_blokovi);
+    printf("blok_shift:        %d\n", bs.blok_shift);
+    printf("br_blokova:        %d\n", bs.br_blokova);
+
+    i = ceil(5.0/2);
+    printf("\n->%d<-\n", i);
+    uinit_disk();
 
     /*rec nesto;
     rec bla;

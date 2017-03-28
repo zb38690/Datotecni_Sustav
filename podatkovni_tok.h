@@ -1,7 +1,7 @@
 #ifndef PODATKOVNI_TOK_H_INCLUDED
 #define PODATKOVNI_TOK_H_INCLUDED
 #include "blokovni_tok.h"
-#inlcude "global.h"
+#include "global.h"
 
 struct
 {

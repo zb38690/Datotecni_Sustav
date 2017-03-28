@@ -45,6 +45,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="ds_disk_operacije.h" />
+		<Unit filename="format.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="format.h" />
 		<Unit filename="global.h" />
 		<Unit filename="inode.h">
 			<Option target="&lt;{~None~}&gt;" />

@@ -2,7 +2,7 @@
 
 long dohvati_adresu(ds_adresa a)
 {
-    return (a.alokacijska_grupa * a.poz);
+    return (a.alokacijska_grupa * (sizeof(ds_block)*8)) + a.poz;
 }
 
 long udaljenost(long adresa, long poz)
@@ -10,15 +10,13 @@ long udaljenost(long adresa, long poz)
     return (adresa - poz);
 }
 
-void pisi_na_disk(ds_adresa a, ds_block dsb)
+void pisi_na_disk(ds_adresa a, ds_block *dsb)
 {
-    long adresa = dohvati_adresu(a);
-    long poz = pozicija();
-    long odrediste = udaljenost(adresa, poz);
+    long odrediste = udaljenost(dohvati_adresu(a), pozicija());
     int i;
     disk_blok db[SEKTOR_MULTIPLIER];
 
-    memcpy(db, dsb, sizeof(dsb));
+    memcpy(db, dsb, sizeof(ds_block));
 
     pisi(odrediste, db[0]);
     for(i = 1; i < SEKTOR_MULTIPLIER; i++)
@@ -27,23 +25,20 @@ void pisi_na_disk(ds_adresa a, ds_block dsb)
     }
 }
 
-ds_block *citaj_sa_diska(ds_adresa a)
+void citaj_sa_diska(ds_adresa a, ds_block *dsb)
 {
-    long adresa = dohvati_adresu(a);
-    long poz = pozicija();
-    long izvor = udaljenost(adresa, poz);
+    long izvor = udaljenost(dohvati_adresu(a), pozicija());
     int i;
     disk_blok db[SEKTOR_MULTIPLIER];
-    ds_block x;
 
-    db[0] = citaj(izvor);
+    citaj(izvor, &db[0]);
 
     for(i = 1; i < SEKTOR_MULTIPLIER; i++)
     {
-        db[i] = citaj(0);
+        citaj(0, &db[i]);
+        //memcpy(db[i], citaj(izvor), sizeof(db[i]));
     }
 
-    memcpy(x, db, sizeof(x));
+    memcpy(dsb, &db, sizeof(ds_block));
 
-    return x;
 }

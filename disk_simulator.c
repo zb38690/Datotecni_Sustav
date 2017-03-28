@@ -55,18 +55,14 @@ unsigned long long velicina()
         return NULL;
 }
 
-disk_blok *citaj(long poz)
+void citaj(long poz, disk_blok *db)
 {
-    disk_blok db;
     if(disk.init)
     {
         fseek(disk.p_disk, sizeof(disk_blok) * poz, SEEK_CUR);
         fread(db, sizeof(disk_blok), 1, disk.p_disk);
         disk.poz_glave = ((ftello64(disk.p_disk))/SEKTOR);
-        return db;
     }
-    else
-        return NULL;
 }
 
 void pisi(long poz, disk_blok podatak)

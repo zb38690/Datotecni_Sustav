@@ -11,7 +11,7 @@ struct
     unsigned int korisnik_id;
     unsigned int grupa_id;
     byte mode[2];
-    adresa roditelj;
+    ds_adresa roditelj;
     podatkovni_tok tok_podataka;
 
 } typedef inode;
