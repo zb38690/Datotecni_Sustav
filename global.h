@@ -7,6 +7,7 @@
 #define SUPERBLOCK_MAGIC2 0xDD121031
 #define SUPERBLOCK_MAGIC3 0x15B6830E
 #define INODE_MAGIC 0x3BBE0AD9
+#define INODE_POSTO 10
 typedef unsigned char byte;
 
 

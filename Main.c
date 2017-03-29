@@ -1,7 +1,7 @@
 #include "meni.h"
 #include <limits.h>
 #include <time.h>
-#include "ds_disk_operacije.h"
+#include "format.h"
 
 int main()
 {
@@ -19,31 +19,15 @@ int main()
         uinit_disk();
     }
 */
-    init_disk("blablabla");
-
-    superblock sb, bs;
     ds_adresa dsa;
     ds_block dsb;
-    char c[29] = "Jednostavni Datotecni Sustav\0";
-    int i;
-    strcpy(sb.ds_ime, c);
+    superblock bs;
+    init_disk("blablabla");
 
-
-    sb.magic1 = SUPERBLOCK_MAGIC1;
-    sb.magic2 = SUPERBLOCK_MAGIC2;
-    sb.magic3 = SUPERBLOCK_MAGIC3;
-    sb.velicina_bloka = SEKTOR*SEKTOR_MULTIPLIER;
-    sb.blok_shift = log2(SEKTOR);
-    sb.br_blokova = velicina()/sb.velicina_bloka;
-    sb.koristeni_blokovi = 1;
+    format();
 
     dsa.alokacijska_grupa = 0;
     dsa.poz = 0;
-
-    memcpy(dsb, &sb, sizeof(superblock));
-
-    pisi_na_disk(dsa, &dsb);
-
 
     citaj_sa_diska(dsa, &dsb);
 
@@ -51,15 +35,21 @@ int main()
 
     printf("ime:               %s\n", bs.ds_ime);
     printf("magic1:            %x\n", bs.magic1);
-    printf("magic2:            %x\n", bs.magic2);
-    printf("magic3:            %x\n", bs.magic3);
     printf("velicina bloka:    %d\n", bs.velicina_bloka);
-    printf("koristeni blokovi: %d\n", bs.koristeni_blokovi);
     printf("blok_shift:        %d\n", bs.blok_shift);
     printf("br_blokova:        %d\n", bs.br_blokova);
+    printf("koristeni blokovi: %d\n", bs.koristeni_blokovi);
+    printf("magic2:            %x\n", bs.magic2);
+    printf("alokacijske_grupe: %d\n", bs.alokacijske_grupe);
+    printf("ag_shift:          %d\n", bs.ag_shift);
+    printf("inode_ag:          %d\n", bs.slobodni_inode.alokacijska_grupa);
+    printf("inode_poz:         %d\n", bs.slobodni_inode.poz);
+    printf("prostor_ag:        %d\n", bs.slobodni_prostor.alokacijska_grupa);
+    printf("prostor_poz:       %d\n", bs.slobodni_prostor.poz);
+    printf("magic3:            %x\n", bs.magic3);
 
-    i = ceil(5.0/2);
-    printf("\n->%d<-\n", i);
+
+
     uinit_disk();
 
     /*rec nesto;
