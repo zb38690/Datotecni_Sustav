@@ -5,6 +5,6 @@
 
 void format();
 bool formatiran();
-ds_adresa inode_adresa(unsigned int, unsigned int);
-ds_adresa prostor_adresa(unsigned int, unsigned int, ds_adresa);
+
+void postavi_adrese(superblock*);
 #endif // FORMAT_H_INCLUDED

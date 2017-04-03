@@ -5,8 +5,6 @@
 #include "SuperBlock.h"
 #include "inode.h"
 #include "ds_adresa.h"
-#define SEKTOR_MULTIPLIER 1
-typedef byte ds_block[SEKTOR*SEKTOR_MULTIPLIER];
 
 long dohvati_adresu(ds_adresa);
 void pisi_na_disk(ds_adresa, ds_block*);

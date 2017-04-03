@@ -5,7 +5,12 @@
 
 int main()
 {
+ds_block dsb;
+nulblock(&dsb);
+int i = 0;
 
+for(i; i < 512; i++)
+    printf("%d - %d\n", i, dsb[i]);
 //printf("%lli\n%llu\n", LONG_MAX, ULONG_MAX);
 /*
     if(g_meni() == 1)
@@ -19,7 +24,7 @@ int main()
         uinit_disk();
     }
 */
-    ds_adresa dsa;
+/*    ds_adresa dsa;
     ds_block dsb;
     superblock bs;
     init_disk("blablabla");
@@ -42,6 +47,8 @@ int main()
     printf("magic2:            %x\n", bs.magic2);
     printf("alokacijske_grupe: %d\n", bs.alokacijske_grupe);
     printf("ag_shift:          %d\n", bs.ag_shift);
+    printf("bitmap_start:      %d\n", bs.bmap.dsa.poz);
+    printf("bitmap_granica     %d\n", bs.bmap.granica);
     printf("inode_ag:          %d\n", bs.slobodni_inode.alokacijska_grupa);
     printf("inode_poz:         %d\n", bs.slobodni_inode.poz);
     printf("prostor_ag:        %d\n", bs.slobodni_prostor.alokacijska_grupa);
@@ -49,29 +56,6 @@ int main()
     printf("magic3:            %x\n", bs.magic3);
 
 
-
-    uinit_disk();
-
-    /*rec nesto;
-    rec bla;
-    disk_blok db;
-    nesto.x = 7;
-    nesto.y = 8;
-    nesto.z = 9;
-
-    init_disk("file.bin");
-
-    memcpy(db, &nesto, sizeof(nesto));
-    pisi(1, db);
-
-    printf(imediska());
-    printf("\n");
-    printf("%llu\n", velicina());
-    printf("%lu\n", pozicija());
-    citaj(2, &db);
-    memcpy(&bla, db, sizeof(nesto));
-    printf("%lu\n", pozicija());
-    printf("%d, %d, %d\n", bla.x, bla.y, bla.z);
 
     uinit_disk();*/
 /*

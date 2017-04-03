@@ -7,8 +7,6 @@
 #include <limits.h>
 #include "global.h"
 
-typedef byte disk_blok[SEKTOR];
-
 struct
 {
     unsigned long long prostor;

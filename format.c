@@ -14,16 +14,14 @@ void format()
     sb.velicina_bloka = sizeof(ds_block);
     sb.blok_shift = log2(sizeof(ds_block));
     sb.br_blokova = velicina()/sb.velicina_bloka;
-    //sb.koristeni_blokovi;
-    sb.magic2 = SUPERBLOCK_MAGIC2;
+    //sb.koristeni_blokovi = 123456789; <---------------------------------
     sb.alokacijske_grupe = ceil(bitmap/sizeof(ds_block));
+    sb.magic2 = SUPERBLOCK_MAGIC2;
     sb.ag_shift = log2(sizeof(ds_block) * 8);
-    sb.slobodni_inode = inode_adresa(sb.alokacijske_grupe, sb.ag_shift);
-    sb.slobodni_prostor = prostor_adresa(sb.br_blokova, sb.ag_shift, sb.slobodni_inode);
 
-    sb.root_direktorij = sb.slobodni_prostor;// <-----------
+    postavi_adrese(&sb);
 
-    sb.koristeni_blokovi = sb.root_direktorij.poz * (sb.root_direktorij.alokacijska_grupa + 1);
+    //sb.root_direktorij = sb.slobodni_prostor;// <-----------
 
     sb.magic3 = SUPERBLOCK_MAGIC3;
 
@@ -54,45 +52,46 @@ bool formatiran()
     return false;
 }
 
-ds_adresa inode_adresa(unsigned int alokacijske_grupe, unsigned int ag_shift)
+void postavi_adrese(superblock *sb)
 {
-    unsigned int cnt = 1;
-    unsigned int sb = sizeof(superblock);
+    unsigned int sbs = sizeof(superblock);
     ds_adresa dsa;
+    ds_block dsb;
 
     dsa.alokacijska_grupa = 0;
+    dsa.poz = 0;
 
-    while(sb > sizeof(ds_block))
+    while(sbs > sizeof(ds_block))// broj blokova koje je superblock zauze
     {
-        cnt++;
-        sb -= sizeof(ds_block);
+        dsa.poz++;
+        sbs -= sizeof(ds_block);
     }
 
-    cnt+= alokacijske_grupe;
+    dsa.poz++;
 
-    while(cnt > (1 << ag_shift))
-    {
-        dsa.alokacijska_grupa++;
-        cnt -= (1 << ag_shift);
-    }
+    sb->bmap.dsa = dsa;
 
-    dsa.poz = cnt;
+    dsa.poz+= sb->alokacijske_grupe;// broj blokova koje je bitmapa zauzela
 
-    return dsa;
-}
-
-ds_adresa prostor_adresa(unsigned int br_blokova, unsigned int ag_shift, ds_adresa slobodni_inode)
-{
-    unsigned int inodovi = ceil(((float)br_blokova / 100) * INODE_POSTO);
-    ds_adresa dsa;
-    dsa.alokacijska_grupa = slobodni_inode.alokacijska_grupa;
-    dsa.poz = slobodni_inode.poz + inodovi;
-
-    while(dsa.poz > (1 << ag_shift))
+    while(dsa.poz > (1 << sb->ag_shift))// provjera dali bitmapa prelazi u sljedecu ag
     {
         dsa.alokacijska_grupa++;
-        dsa.poz -= (1 << ag_shift);
+        dsa.poz -= (1 << sb->ag_shift);
     }
 
-    return dsa;
+    sb->slobodni_inode = dsa;
+
+    sbs = ceil(((float)sb->br_blokova / 100) * INODE_POSTO);// sbs postaje velicina inode tablice
+
+    sb->bmap.granica = (sbs * sizeof(ds_block) * 8);
+
+    dsa.poz += sbs;
+
+    while(dsa.poz > (1 << sb->ag_shift))// provjera dali inode tablica prelazi ag
+    {
+        dsa.alokacijska_grupa++;
+        dsa.poz -= (1 << sb->ag_shift);
+    }
+
+    sb->slobodni_prostor = dsa;
 }
