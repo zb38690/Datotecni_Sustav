@@ -95,3 +95,17 @@ void postavi_adrese(superblock *sb)
 
     sb->slobodni_prostor = dsa;
 }
+
+void postavi_root(superblock *sb)
+{
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    //printf("%d.%d.%d %d:%d:%d\n", tm.tm_mday, tm.tm_mon+1, tm.tm_year+1900, tm.tm_hour, tm.tm_min, tm.tm_sec);
+    inode root;
+
+    root.inode_br = 0;
+    root.vrijeme_stvaranja = 0;
+    root.vrime_mjenjanja = 0;
+    root.korisnik_id = 0;
+
+}

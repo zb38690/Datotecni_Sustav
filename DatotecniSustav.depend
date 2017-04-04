@@ -88,7 +88,7 @@
 	"inode.h"
 	"ds_adresa.h"
 
-1489769486 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/ds_adresa.h
+1491295798 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/ds_adresa.h
 
 1491250414 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/SuperBlock.h
 	"global.h"
@@ -107,7 +107,7 @@
 1489769790 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/blokovni_tok.h
 	"ds_adresa.h"
 
-1491240500 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/format.c
+1491255847 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/format.c
 	"format.h"
 
 1491240580 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/format.h
@@ -118,6 +118,6 @@
 	"blokovni_tok.h"
 	"global.h"
 
-1491246488 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/bitmap.c
+1491295792 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/bitmap.c
 	"bitmap.h"
 

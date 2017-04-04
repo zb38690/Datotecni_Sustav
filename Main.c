@@ -9,6 +9,7 @@ ds_block dsb;
 nulblock(&dsb);
 int i = 0;
 
+
 for(i; i < 512; i++)
     printf("%d - %d\n", i, dsb[i]);
 //printf("%lli\n%llu\n", LONG_MAX, ULONG_MAX);

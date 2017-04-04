@@ -5,6 +5,6 @@
 
 void format();
 bool formatiran();
-
 void postavi_adrese(superblock*);
+void postavi_root(superblock*);
 #endif // FORMAT_H_INCLUDED
