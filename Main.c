@@ -5,13 +5,13 @@
 
 int main()
 {
-ds_block dsb;
-nulblock(&dsb);
-int i = 0;
+    inode x;
+    postavi_vrimes(&x);
+
+    printf("%d:%d - %d.%d.%d",(x.vrime_stvaranja>>27)&31,(x.vrime_stvaranja>>21)&63,(x.vrime_stvaranja >> 16)&31,(x.vrime_stvaranja >> 12)&15 ,x.vrime_stvaranja&4095);
 
 
-for(i; i < 512; i++)
-    printf("%d - %d\n", i, dsb[i]);
+
 //printf("%lli\n%llu\n", LONG_MAX, ULONG_MAX);
 /*
     if(g_meni() == 1)

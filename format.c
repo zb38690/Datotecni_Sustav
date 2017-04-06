@@ -102,10 +102,22 @@ void postavi_root(superblock *sb)
     struct tm tm = *localtime(&t);
     //printf("%d.%d.%d %d:%d:%d\n", tm.tm_mday, tm.tm_mon+1, tm.tm_year+1900, tm.tm_hour, tm.tm_min, tm.tm_sec);
     inode root;
+    user su;
+    group sudo;
+    char ime[5] = {'r','o','o','t','\0'};
 
-    root.inode_br = 0;
-    root.vrijeme_stvaranja = 0;
-    root.vrime_mjenjanja = 0;
-    root.korisnik_id = 0;
+    strcpy(su.ime, ime);
+    su.id = 0;
+    strcpy(sudo.ime, ime);
+    sudo.id = 0;
+
+    postavi_vrimes(&root);
+
+    root.korisnik_id = su.id;
+    root.grupa_id = sudo.id;
+
+    root.mode[0] = 0 | ((1 << 5) - 1);
+    root.mode[1] = 0 | ((1 << 2) - 1);
+
 
 }

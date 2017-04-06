@@ -1,7 +1,9 @@
 #ifndef FORMAT_H_INCLUDED
 #define FORMAT_H_INCLUDED
 #include <math.h>
+#include <time.h>
 #include "ds_disk_operacije.h"
+#include "user.h"
 
 void format();
 bool formatiran();

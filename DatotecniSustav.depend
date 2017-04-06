@@ -72,7 +72,7 @@
 	"disk_simulator.h"
 	<string.h>
 
-1491250204 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/Main.c
+1491494069 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/Main.c
 	"meni.h"
 	<limits.h>
 	<time.h>
@@ -107,12 +107,14 @@
 1489769790 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/blokovni_tok.h
 	"ds_adresa.h"
 
-1491255847 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/format.c
+1491497115 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/format.c
 	"format.h"
 
-1491240580 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/format.h
+1491409862 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/format.h
 	<math.h>
+	<time.h>
 	"ds_disk_operacije.h"
+	"user.h"
 
 1491250204 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/bitmap.h
 	"blokovni_tok.h"
@@ -120,4 +122,7 @@
 
 1491295792 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/bitmap.c
 	"bitmap.h"
+
+1491498586 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/user.h
+	"global.h"
 

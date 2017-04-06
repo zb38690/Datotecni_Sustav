@@ -50,6 +50,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="ds_disk_operacije.h" />
+		<Unit filename="ds_operacije.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="ds_operacije.h" />
 		<Unit filename="format.c">
 			<Option compilerVar="CC" />
