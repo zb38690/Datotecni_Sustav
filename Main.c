@@ -30,7 +30,7 @@ int main()
 
     citaj_sa_diska(r.tok_podataka.direktni[0], &dsb);
     memcpy(&d, dsb, sizeof(dir));
-    //memcpy(&de, dsb + sizeof(dir), sizeof(dir_ele));
+    memcpy(&de, dsb + sizeof(dir), sizeof(dir_ele));
 
 
     printf("-------------SUPERBLOCK-------------\n");
