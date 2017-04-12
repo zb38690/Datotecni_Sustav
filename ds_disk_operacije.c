@@ -2,7 +2,7 @@
 
 long dohvati_adresu(ds_adresa a)
 {
-    return (a.alokacijska_grupa * (sizeof(ds_block)*8)) + a.poz;
+    return SEKTOR_MULTIPLIER * a;
 }
 
 long udaljenost(long adresa, long poz)

@@ -42,7 +42,7 @@ void uinit_disk()
 char* imediska()
 {
     if(disk.init)
-        return &disk.ime;
+        return disk.ime;
     else
         return "Disk nije inicijaliziran...\n";
 }

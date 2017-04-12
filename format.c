@@ -5,7 +5,7 @@ void format()
     superblock sb;
     ds_adresa dsa;
     ds_block dsb;
-    float bitmap = ((float)(velicina())/(sizeof(ds_block)*8));
+
 
     char c[29] = "Jednostavni Datotecni Sustav\0";
 
@@ -15,18 +15,14 @@ void format()
     sb.blok_shift = log2(sizeof(ds_block));
     sb.br_blokova = velicina()/sb.velicina_bloka;
     //sb.koristeni_blokovi = 123456789; <---------------------------------
-    sb.alokacijske_grupe = ceil(bitmap/sizeof(ds_block));
     sb.magic2 = SUPERBLOCK_MAGIC2;
-    sb.ag_shift = log2(sizeof(ds_block) * 8);
-
     postavi_adrese(&sb);
-
+    postavi_root(&sb);
     //sb.root_direktorij = sb.slobodni_prostor;// <-----------
 
     sb.magic3 = SUPERBLOCK_MAGIC3;
 
-    dsa.alokacijska_grupa = 0;
-    dsa.poz = 0;
+    dsa = 0;
 
     memcpy(dsb, &sb, sizeof(superblock));
 
@@ -39,8 +35,7 @@ bool formatiran()
     superblock sb;
     ds_adresa a;
 
-    a.alokacijska_grupa = 0;
-    a.poz = 0;
+    a = 0;
 
     citaj_sa_diska(a, &dsb);
 
@@ -55,29 +50,23 @@ bool formatiran()
 void postavi_adrese(superblock *sb)
 {
     unsigned int sbs = sizeof(superblock);
+    float bmap = ((float)(velicina())/(sizeof(ds_block)*8));
     ds_adresa dsa;
     ds_block dsb;
 
-    dsa.alokacijska_grupa = 0;
-    dsa.poz = 0;
+    dsa = 0;
 
     while(sbs > sizeof(ds_block))// broj blokova koje je superblock zauze
     {
-        dsa.poz++;
+        dsa++;
         sbs -= sizeof(ds_block);
     }
 
-    dsa.poz++;
+    dsa++;
 
     sb->bmap.dsa = dsa;
 
-    dsa.poz+= sb->alokacijske_grupe;// broj blokova koje je bitmapa zauzela
-
-    while(dsa.poz > (1 << sb->ag_shift))// provjera dali bitmapa prelazi u sljedecu ag
-    {
-        dsa.alokacijska_grupa++;
-        dsa.poz -= (1 << sb->ag_shift);
-    }
+    dsa += ceil(bmap/sizeof(ds_block));// broj blokova koje je bitmapa zauzela
 
     sb->slobodni_inode = dsa;
 
@@ -85,13 +74,7 @@ void postavi_adrese(superblock *sb)
 
     sb->bmap.granica = (sbs * sizeof(ds_block) * 8);
 
-    dsa.poz += sbs;
-
-    while(dsa.poz > (1 << sb->ag_shift))// provjera dali inode tablica prelazi ag
-    {
-        dsa.alokacijska_grupa++;
-        dsa.poz -= (1 << sb->ag_shift);
-    }
+    dsa += sbs;
 
     sb->slobodni_prostor = dsa;
 }
@@ -102,22 +85,71 @@ void postavi_root(superblock *sb)
     struct tm tm = *localtime(&t);
     //printf("%d.%d.%d %d:%d:%d\n", tm.tm_mday, tm.tm_mon+1, tm.tm_year+1900, tm.tm_hour, tm.tm_min, tm.tm_sec);
     inode root;
+    inode users;
     user su;
-    group sudo;
+    dir d;
+    dir_ele usr;
+    ds_adresa dsa;
+    ds_block dsb;
+    byte *data;
     char ime[5] = {'r','o','o','t','\0'};
 
-    strcpy(su.ime, ime);
-    su.id = 0;
-    strcpy(sudo.ime, ime);
-    sudo.id = 0;
+    strcpy(su.u.ime, ime);
+    su.u.id = 0;
+    strcpy(su.g.ime, ime);
+    su.g.id = 0;
 
     postavi_vrimes(&root);
 
-    root.korisnik_id = su.id;
-    root.grupa_id = sudo.id;
+    root.magic = INODE_MAGIC;
+    root.korisnik_id = su.u.id;
+    root.grupa_id = su.g.id;
+    root.mode[0] = 31;//    BIN 0001 1111
+    root.mode[1] = 22;//    BIN 0001 0110
+    root.inode_br = 0;
+    root.roditelj = 0;
+    root.tok_podataka.velicina = (sizeof(dir) + sizeof(dir_ele));
 
-    root.mode[0] = 0 | ((1 << 5) - 1);
-    root.mode[1] = 0 | ((1 << 2) - 1);
+    d.br_roditelj = root.inode_br;
+    strcpy(d.ime_roditelj, ime);
+    d.br_tren = d.br_roditelj;
+    strcpy(d.ime_tren, d.ime_roditelj);
+
+    root.tok_podataka.direktni[0] = sb->slobodni_prostor + 1;
+
+    sb->root_direktorij = root;
+
+    postavi_vrimes(&users);
+
+    users.magic = INODE_MAGIC;
+    users.korisnik_id = su.u.id;
+    users.grupa_id = su.g.id;
+    users.mode[0] = 30;//    BIN 0001 1111
+    users.mode[1] = 22;//    BIN 0001 0110
+    users.inode_br = 1;
+    users.roditelj = root.inode_br;
+    users.tok_podataka.direktni[0] = sb->slobodni_prostor;
+    users.tok_podataka.velicina = sizeof(user);
+
+    usr.br_inode = users.inode_br;
+    strcpy(usr.ime_inode, "users\0");
+    usr.next = NULL;
+    d.head = &usr;
+
+    memcpy(dsb, &root, sizeof(inode));//            pohranjivanje root inode
+    pisi_na_disk(sb->slobodni_inode, &dsb);
+
+    //                                              pohranjivanje root direktorija
+
+    data = (byte*)malloc(root.tok_podataka.velicina);
+    memcpy(data, &d, sizeof(dir));
+    memcpy(data + sizeof(dir), &usr, sizeof(dir_ele));
+    memcpy(dsb, data, root.tok_podataka.velicina);
+    pisi_na_disk(root.tok_podataka.direktni[0], &dsb);
+    free(data);
 
 
+    dsa = sb->slobodni_inode +1;
+    memcpy(dsb, &users, sizeof(inode));
+    pisi_na_disk(dsa, &dsb);
 }

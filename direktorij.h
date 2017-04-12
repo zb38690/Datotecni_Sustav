@@ -1,5 +1,12 @@
 #ifndef DIREKTORIJ_H_INCLUDED
 #define DIREKTORIJ_H_INCLUDED
+#include "global.h"
+struct
+{
+    unsigned int br_inode;
+    char ime_inode[MAX_CHAR_LENGTH];
+    struct dir_ele *next;
+}typedef dir_ele;
 
 struct
 {
@@ -9,11 +16,4 @@ struct
     char ime_tren[MAX_CHAR_LENGTH];
     dir_ele *head;
 }typedef dir;
-
-struct
-{
-    unsigned int br_inode;
-    char ime_inode[MAX_CHAR_LENGTH];
-    dir_ele *next;
-}typedef dir_ele;
 #endif // DIREKTORIJ_H_INCLUDED

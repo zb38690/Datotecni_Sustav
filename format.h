@@ -4,6 +4,7 @@
 #include <time.h>
 #include "ds_disk_operacije.h"
 #include "user.h"
+#include "direktorij.h"
 
 void format();
 bool formatiran();

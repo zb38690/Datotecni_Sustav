@@ -1,14 +1,14 @@
 #ifndef PODATKOVNI_TOK_H_INCLUDED
 #define PODATKOVNI_TOK_H_INCLUDED
-#include "blokovni_tok.h"
 #include "global.h"
 
 struct
 {
-    blokovni_tok direktni[BR_DIREKTNIH];
-    blokovni_tok indirektni;
-    blokovni_tok d_indirektni;
-    unsigned int velicina;}typedef podatkovni_tok;
+    ds_adresa direktni[BR_DIREKTNIH];
+    ds_adresa indirektni;
+    ds_adresa d_indirektni;
+    unsigned long velicina;
+}typedef podatkovni_tok;
 
 
 #endif // PODATKOVNI_TOK_H_INCLUDED

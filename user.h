@@ -5,11 +5,17 @@ struct
 {
     char ime[MAX_CHAR_LENGTH];
     unsigned int id;
-}typedef user;
+}typedef usr;
 
 struct
 {
     char ime[MAX_CHAR_LENGTH];
     unsigned int id;
-} typedef group;
+}typedef grp;
+
+struct
+{
+    usr u;
+    grp g;
+}typedef user;
 #endif // USER_H_INCLUDED

@@ -1,35 +1,43 @@
 #include "ds_operacije.h"
 
-void postavi_vrimes(inode *n)
+void nulblock(ds_block *dsb)
 {
+    int i;
+    ds_block x;
 
-    time_t t = time(NULL);
-    struct tm tm = *localtime(&t);
+    for(i = 0; i < sizeof(ds_block); i++)
+        x[i] = 0;
 
-    n->vrime_stvaranja = tm.tm_hour;
-    n->vrime_stvaranja = n->vrime_stvaranja << 6;
-    n->vrime_stvaranja |= tm.tm_min;
-    n->vrime_stvaranja = n->vrime_stvaranja << 5;
-    n->vrime_stvaranja |= tm.tm_mday;
-    n->vrime_stvaranja = n->vrime_stvaranja << 4;
-    n->vrime_stvaranja |= tm.tm_mon+1;
-    n->vrime_stvaranja = n->vrime_stvaranja << 12;
-    n->vrime_stvaranja |= (tm.tm_year+1900);
-    n->vrime_mjenjanja = n->vrime_stvaranja;
+    memcpy(dsb, x, sizeof(ds_block));
 }
 
-void postavi_vrimem(inode *n)
+void pohrani_dir(inode *n, dir *d)
 {
-    time_t t = time(NULL);
-    struct tm tm = *localtime(&t);
+    ds_block dsb;
+    unsigned long v = sizeof(dir);
+    unsigned short cnt = 0;
 
-    n->vrime_mjenjanja = tm.tm_hour;
-    n->vrime_mjenjanja = n->vrime_mjenjanja << 6;
-    n->vrime_mjenjanja |= tm.tm_min;
-    n->vrime_mjenjanja = n->vrime_mjenjanja << 5;
-    n->vrime_mjenjanja |= tm.tm_mday;
-    n->vrime_mjenjanja = n->vrime_mjenjanja << 4;
-    n->vrime_mjenjanja |= tm.tm_mon+1;
-    n->vrime_mjenjanja = n->vrime_mjenjanja << 12;
-    n->vrime_mjenjanja |= (tm.tm_year+1900);
+
+    dir_ele *ptr = d->head;
+
+
+    while(ptr != NULL)
+    {
+        v += sizeof(dir_ele);
+
+        if(v > sizeof(ds_block))
+        {
+
+            v -= sizeof(ds_block);
+            // ODE TREBA FIND NEW ADDRESS !!!!!!!!!!
+            pisi_na_disk(n->tok_podataka.direktni[cnt], &dsb);
+            cnt++;
+
+        }
+        //dsb |= ptr;
+       // ptr = ptr->next;
+
+
+    }
+
 }

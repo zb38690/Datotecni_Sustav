@@ -39,13 +39,11 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="bitmap.h" />
-		<Unit filename="blokovni_tok.h" />
 		<Unit filename="direktorij.h" />
 		<Unit filename="disk_simulator.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="disk_simulator.h" />
-		<Unit filename="ds_adresa.h" />
 		<Unit filename="ds_disk_operacije.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -59,9 +57,10 @@
 		</Unit>
 		<Unit filename="format.h" />
 		<Unit filename="global.h" />
-		<Unit filename="inode.h">
-			<Option target="&lt;{~None~}&gt;" />
+		<Unit filename="inode.c">
+			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="inode.h" />
 		<Unit filename="meni.c">
 			<Option compilerVar="CC" />
 		</Unit>

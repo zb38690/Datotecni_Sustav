@@ -14,6 +14,7 @@
 typedef unsigned char byte;
 typedef byte disk_blok[SEKTOR];
 typedef byte ds_block[SEKTOR*SEKTOR_MULTIPLIER];
+typedef unsigned int ds_adresa;
 
 
 #endif // GLOBAL_H_INCLUDED
