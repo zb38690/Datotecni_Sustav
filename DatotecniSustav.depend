@@ -72,7 +72,7 @@
 	"disk_simulator.h"
 	<string.h>
 
-1492026263 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/Main.c
+1492107757 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/Main.c
 	"meni.h"
 	<limits.h>
 	<time.h>
@@ -133,9 +133,13 @@
 	"direktorij.h"
 	"inode.h"
 
-1491998757 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/direktorij.h
+1492107678 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/direktorij.h
 	"global.h"
+	<stddef.h>
 
 1491746797 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/inode.c
 	"inode.h"
+
+1492107927 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/direktorij.c
+	"direktorij.h"
 
