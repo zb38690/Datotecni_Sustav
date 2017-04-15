@@ -3,6 +3,7 @@
 #include "global.h"
 #include "bitmap.h"
 #include "inode.h"
+
 struct
 {
    char ds_ime[MAX_CHAR_LENGTH];
@@ -13,8 +14,8 @@ struct
    unsigned int koristeni_blokovi;//<--
    int magic2;
    bitmap bmap;
-   ds_adresa slobodni_inode;
-   ds_adresa slobodni_prostor;
+   //ds_adresa slobodni_inode;
+   //ds_adresa slobodni_prostor;
    inode root_direktorij;
    int magic3;
 

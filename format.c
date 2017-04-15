@@ -68,15 +68,15 @@ void postavi_adrese(superblock *sb)
 
     dsa += ceil(bmap/sizeof(ds_block));// broj blokova koje je bitmapa zauzela
 
-    sb->slobodni_inode = dsa;
+    sb->bmap.inode_start = dsa;
 
     sbs = ceil(((float)sb->br_blokova / 100) * INODE_POSTO);// sbs postaje velicina inode tablice
 
-    sb->bmap.granica = (sbs * sizeof(ds_block) * 8);
-
     dsa += sbs;
 
-    sb->slobodni_prostor = dsa;
+    sb->bmap.prostor_start = dsa;
+    sb->bmap.prostor_stop = velicina() / sizeof(ds_block);
+
 }
 
 void postavi_root(superblock *sb)
@@ -115,7 +115,7 @@ void postavi_root(superblock *sb)
     d.br_tren = d.br_roditelj;
     strcpy(d.ime_tren, d.ime_roditelj);
 
-    root.tok_podataka.direktni[0] = sb->slobodni_prostor + 1;
+    root.tok_podataka.direktni[0] = sb->bmap.prostor_start + 1;
 
     sb->root_direktorij = root;
 
@@ -128,7 +128,7 @@ void postavi_root(superblock *sb)
     users.mode[1] = 22;//    BIN 0001 0110
     users.inode_br = 1;
     users.roditelj = root.inode_br;
-    users.tok_podataka.direktni[0] = sb->slobodni_prostor;
+    users.tok_podataka.direktni[0] = sb->bmap.prostor_start;
     users.tok_podataka.velicina = sizeof(user);
 
     usr.br_inode = users.inode_br;
@@ -137,7 +137,7 @@ void postavi_root(superblock *sb)
     d.head = &usr;
 
     memcpy(dsb, &root, sizeof(inode));//            pohranjivanje root inode
-    pisi_na_disk(sb->slobodni_inode, &dsb);
+    pisi_na_disk(sb->bmap.inode_start, &dsb);
 
     //                                              pohranjivanje root direktorija
 
@@ -149,7 +149,7 @@ void postavi_root(superblock *sb)
     free(data);
 
 
-    dsa = sb->slobodni_inode +1;
+    dsa = sb->bmap.inode_start + 1;
     memcpy(dsb, &users, sizeof(inode));
     pisi_na_disk(dsa, &dsb);
 }

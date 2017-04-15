@@ -32,5 +32,5 @@ static void clear_all(dir*);
 static unsigned int clear_ele(dir*, char*);
 static void print_all(dir*);
 static void add(dir*, int, char*);
-void init_dir(dir_op*);
+void init_dir_op(dir_op*);
 #endif // DIREKTORIJ_H_INCLUDED

@@ -4,10 +4,34 @@
 #include "format.h"
 #include "direktorij.h"
 
-
 int main()
 {
 
+    bitmap b;
+    init_bmap(&b);
+    b.dsa = 1;
+    b.inode_start = 2;
+    b.prostor_start = 412;
+    b.prostor_stop = 4096;
+    ds_block dsb;
+    ds_adresa dsa = 2;
+    int i;
+    int x = 0;
+
+//    init_disk("blablabla");
+//    citaj_sa_diska(b.dsa, &dsb);
+    nulblock(&dsb);
+    b.obradi(&b, &dsa, zauzmi_bit, &dsb);
+    dsa++;
+    b.obradi(&b, &dsa, zauzmi_bit, &dsb);
+
+//    obradi_bmapu(&b, &b.inode_start, o);
+
+//    citaj_sa_diska(b.dsa, &dsb);
+
+    printf("\n\n%d\n", slobodni_inode(&b, &dsb, &b.dsa));
+//    uinit_disk();
+/*
     int x = 1;
     int y = 1;
     char c[MAX_CHAR_LENGTH];
@@ -68,7 +92,7 @@ int main()
                 x = 0;
                 break;
         }
-    }
+    }*/
 /*
     superblock sb;
     inode r, u;
@@ -85,7 +109,7 @@ int main()
     citaj_sa_diska(dsa, &dsb);
     memcpy(&sb, dsb, sizeof(superblock));
 
-    dsa = sb.slobodni_inode;
+    dsa = sb.bmap.inode_start;
     citaj_sa_diska(dsa, &dsb);
     memcpy(&r, dsb, sizeof(inode));
 
@@ -106,10 +130,10 @@ int main()
     printf("br_blokova:         %d\n", sb.br_blokova);
     printf("koristeni blokovi:  %d\n", sb.koristeni_blokovi);
     printf("magic2:             %x\n", sb.magic2);
-    printf("bitmap_start:       %d\n", sb.bmap.dsa);
-    printf("bitmap_granica:     %d\n", sb.bmap.granica);
-    printf("inode_poz:          %d\n", sb.slobodni_inode);
-    printf("prostor_poz:        %d\n", sb.slobodni_prostor);
+    printf("bmap_start:         %d\n", sb.bmap.dsa);
+    printf("bmap_inode_start:   %d\n", sb.bmap.inode_start);
+    printf("bmap_prostor_start: %d\n", sb.bmap.prostor_start);
+    printf("bmap_prostor_stop:  %d\n", sb.bmap.prostor_stop);
     printf("magic3:             %x\n", sb.magic3);
     printf("root_magic:         %x\n", sb.root_direktorij.magic);
     printf("root_inode_br:      %d\n", sb.root_direktorij.inode_br);
@@ -140,8 +164,8 @@ int main()
     printf("inode_br:       %d\n", u.inode_br);
     printf("velicina:       %d\n", u.tok_podataka.velicina);
     printf("\n");
-    uinit_disk();*/
-
+    uinit_disk();
+*/
 //printf("%lli\n%llu\n", LONG_MAX, ULONG_MAX);
 /*
     if(g_meni() == 1)
