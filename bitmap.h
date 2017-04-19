@@ -14,7 +14,8 @@ struct
 void init_bmap(bitmap*);
 ds_adresa slobodni_inode(const bitmap*, ds_block*, const ds_adresa*);
 ds_adresa slobodni_prostor(const bitmap*, ds_block*, const ds_adresa*);
-static void obradi_bmapu(bitmap*, const ds_adresa*, void(*fn_pntr)(byte*, byte*), ds_block*);
+ds_adresa bmap_bloka(const bitmap*, const ds_adresa*);
+static void obradi_bmapu(bitmap*, void(*fn_pntr)(byte*, byte*), ds_block*, const ds_adresa*);
 void zauzmi_bit(byte*, byte*);
 void oslobodi_bit(byte*, byte*);
 

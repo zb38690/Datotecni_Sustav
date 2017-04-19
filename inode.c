@@ -37,79 +37,79 @@ void postavi_vrimem(inode *n)
 void postavi_mod_d(inode *node, bool directory)
 {
         if(directory)
-            node->mode[0] |= 1; //  --> BIN 0000 0001
+            node->mode |= 1; //  -->    BIN 000 000 000 1
         else
-            node->mode[0] &= 254;// --> BIN 1111 1110
+            node->mode &= 1022;// -->   BIN 111 111 111 0
 }
 
 void postavi_mod_vc(inode *node, bool owner_r)
 {
     if(owner_r)
-        node->mode[0] |= 2;//   --> BIN 0000 0010
+        node->mode |= 2;// -->          BIN 000 000 001 0
     else
-        node->mode[0] &= 253;//   --> BIN 1111 1101
+        node->mode &= 1021;// -->       BIN 111 111 110 1
 }
 
 void postavi_mod_vp(inode *node, bool owner_w)
 {
     if(owner_w)
-        node->mode[0] |= 4;//   --> BIN 0000 0100
+        node->mode |= 4;// -->          BIN 000 000 010 0
     else
-        node->mode[0] &= 251;// --> BIN 1111 1011
+        node->mode &= 1019;// -->       BIN 111 111 101 1
 }
 
 void postavi_mod_vi(inode *node, bool owner_x)
 {
     if(owner_x)
-        node->mode[0] |= 8;//   --> BIN 0000 1000
+        node->mode |= 8;// -->          BIN 000 000 100 0
     else
-        node->mode[0] &= 247;// --> BIN 1111 0111
+        node->mode &= 1015;// -->       BIN 111 111 011 1
 }
 
 void postavi_mod_gc(inode *node, bool group_r)
 {
     if(group_r)
-        node->mode[0] |= 16;//  BIN 0001 0000
+        node->mode |= 16;// -->         BIN 000 001 000 0
     else
-        node->mode[0] &= 239;// BIN 1110 1111
+        node->mode &= 1007;// -->       BIN 111 110 111 1
 }
 
 void postavi_mod_gp(inode *node, bool group_w)
 {
     if(group_w)
-        node->mode[1] |= 1;//   BIN 0000 0001
+        node->mode |= 32;// -->         BIN 000 010 000 0
     else
-        node->mode[1] &= 254;// BIN 1111 1110
+        node->mode &= 991;// -->        BIN 111 101 111 1
 }
 
 void postavi_mod_gi(inode *node, bool group_x)
 {
     if(group_x)
-        node->mode[1] |= 2;//   BIN 0000 0010
+        node->mode |= 64;// -->         BIN 000 100 000 0
     else
-        node->mode[1] &= 253;// BIN 1111 1101
+        node->mode &= 959;// -->        BIN 111 011 111 1
 }
 
 void postavi_mod_oc(inode *node, bool everyone_r)
 {
     if(everyone_r)
-        node->mode[1] |= 4;//   BIN 0000 0100
+        node->mode |= 128;// -->        BIN 001 000 000 0
     else
-        node->mode[1] &= 251;// BIN 1111 1011
+        node->mode &= 895;// -->        BIN 110 111 111 1
 }
 
 void postavi_mod_op(inode *node, bool everyone_w)
 {
     if(everyone_w)
-        node->mode[1] |= 8;//   BIN 0000 1000
+        node->mode |= 256;// -->        BIN 010 000 000 0
     else
-        node->mode[1] &= 247;// BIN 1111 0111
+        node->mode &= 767;// -->        BIN 101 111 111 1
 }
 
 void postavi_mod_oi(inode *node, bool everyone_x)
 {
     if(everyone_x)
-        node->mode[1] |= 16;//  BIN 0001 0000
+        node->mode |= 512;// -->        BIN 100 000 000 0
     else
-        node->mode[1] &= 239;// BIN 1110 1111
+        node->mode &= 511;// -->        BIN 011 111 111 1
 }

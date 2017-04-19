@@ -5,8 +5,9 @@ void init_bmap(bitmap *self)
     self->obradi = obradi_bmapu;
 }
 
-ds_adresa slobodni_inode(const bitmap *bmap, ds_block *dsb, const ds_adresa *dsa)
+ds_adresa slobodni_inode(const bitmap *bmap, ds_block *dsb, const ds_adresa *dsa)// bitmapa, block iz bitmape, adresa blocka
 {
+
     ds_block maska;// maska ce imat 1 na mjestima slobodnog prostora
     oneblock(&maska);
     int a;
@@ -25,6 +26,7 @@ ds_adresa slobodni_inode(const bitmap *bmap, ds_block *dsb, const ds_adresa *dsa
         msk ^= 255;
 
         (*dsb)[i] &=  maska[i] &= msk;// postavljanje 0 (u bitove) prije pocetka inode tablice
+
     }
 
     if(((((*dsa) - bmap->dsa) * sizeof(ds_block) * 8) + ((sizeof(ds_block)) - 1)) > bmap->prostor_start)// dali je krajni blok > pocetka slobodnog prostora
@@ -113,29 +115,19 @@ ds_adresa slobodni_prostor(const bitmap *bmap, ds_block *dsb, const ds_adresa *d
     return 0;
 }
 
-void obradi_bmapu(bitmap *bmap, const ds_adresa *dsa, void(*fn_pntr)(byte *msk, byte *dsb_b), ds_block *test)
+static void obradi_bmapu(bitmap *bmap, void(*fn_pntr)(byte *msk, byte *dsb_b), ds_block *dsb, const ds_adresa *dsa)
 {
-        if(((*dsa) >= bmap->inode_start) && ((*dsa) < bmap->prostor_stop))
+    if(((*dsa) >= bmap->inode_start) && ((*dsa) < bmap->prostor_stop))
     {
         unsigned int br_bajta = (*dsa) / 8;
         unsigned int poz_ubajtu = (*dsa) - (br_bajta * 8);
-        unsigned int bblok = 0;
         byte b = (short)pow(2, poz_ubajtu);
-        ds_block dsb;
 
 
         while(br_bajta > sizeof(ds_block))
-        {
             br_bajta -= sizeof(ds_block);
-            bblok++;
-        }
 
-//        citaj_sa_diska((bmap->dsa + bblok), &dsb);
-
-//        (*fn_pntr)(&b, &dsb[br_bajta]);
-        (*fn_pntr)(&b, &((*test)[br_bajta]));
-
-//        pisi_na_disk((bmap->dsa + bblok), &dsb);
+        (*fn_pntr)(&b, &((*dsb)[br_bajta]));
     }
 }
 
@@ -148,4 +140,11 @@ void oslobodi_bit(byte *msk, byte *dsb_b)
 {
     (*msk) ^= 255;
     (*dsb_b) &= (*msk);
+}
+
+ds_adresa bmap_bloka(const bitmap *bmap, const ds_adresa *dsa)
+{
+    if(((*dsa) > bmap->dsa) && ((*dsa) < bmap->prostor_stop))
+            return bmap->dsa + ((*dsa) / (sizeof(ds_block) * 8));
+    return 0;
 }

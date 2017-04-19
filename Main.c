@@ -6,31 +6,23 @@
 
 int main()
 {
-
+/*
     bitmap b;
     init_bmap(&b);
     b.dsa = 1;
-    b.inode_start = 2;
-    b.prostor_start = 412;
-    b.prostor_stop = 4096;
+    b.inode_start = 4;
+    b.prostor_start = 1232;
+    b.prostor_stop = 12288;
     ds_block dsb;
-    ds_adresa dsa = 2;
-    int i;
-    int x = 0;
+    ds_adresa dsa = 12287;
 
-//    init_disk("blablabla");
-//    citaj_sa_diska(b.dsa, &dsb);
-    nulblock(&dsb);
-    b.obradi(&b, &dsa, zauzmi_bit, &dsb);
-    dsa++;
-    b.obradi(&b, &dsa, zauzmi_bit, &dsb);
+    oneblock(&dsb);
+    b.obradi(&b, oslobodi_bit, &dsb, &dsa);
 
-//    obradi_bmapu(&b, &b.inode_start, o);
+    dsa = 5;
 
-//    citaj_sa_diska(b.dsa, &dsb);
-
-    printf("\n\n%d\n", slobodni_inode(&b, &dsb, &b.dsa));
-//    uinit_disk();
+    printf("\n%d\n", bmap_bloka(&b, &dsa));
+*/
 /*
     int x = 1;
     int y = 1;
@@ -93,7 +85,7 @@ int main()
                 break;
         }
     }*/
-/*
+
     superblock sb;
     inode r, u;
     dir d;
@@ -121,6 +113,8 @@ int main()
     memcpy(&d, dsb, sizeof(dir));
     memcpy(&de, dsb + sizeof(dir), sizeof(dir_ele));
 
+//    sb.bmap.obradi(&sb.bmap, &sb.bmap.inode_start, zauzmi_bit);
+    citaj_sa_diska(sb.bmap.dsa, &dsb);
 
     printf("-------------SUPERBLOCK-------------\n");
     printf("ime:                %s\n", sb.ds_ime);
@@ -144,8 +138,7 @@ int main()
     printf("vrimem:         %d:%d %d.%d.%d\n", (r.vrime_mjenjanja>>27)&31,(r.vrime_mjenjanja>>21)&63, (r.vrime_mjenjanja >> 16)&31,(r.vrime_mjenjanja >> 12)&15, r.vrime_mjenjanja&4095);
     printf("korisnik_id:    %d\n", r.korisnik_id);
     printf("grupa_id:       %d\n", r.grupa_id);
-    printf("mode[0]:        %d\n", r.mode[0]);
-    printf("mode[1]:        %d\n", r.mode[1]);
+    printf("mode:           %d\n", r.mode);
     printf("roditelj:       %d\n", r.roditelj);
     printf("inode_br:       %d\n", r.inode_br);
     printf("velicina:       %d\n", r.tok_podataka.velicina);
@@ -158,14 +151,16 @@ int main()
     printf("vrimem:         %d:%d %d.%d.%d\n", (u.vrime_mjenjanja>>27)&31,(u.vrime_mjenjanja>>21)&63, (u.vrime_mjenjanja >> 16)&31,(u.vrime_mjenjanja >> 12)&15, u.vrime_mjenjanja&4095);
     printf("korisnik_id:    %d\n", u.korisnik_id);
     printf("grupa_id:       %d\n", u.grupa_id);
-    printf("mode[0]:        %d\n", u.mode[0]);
-    printf("mode[1]:        %d\n", u.mode[1]);
+    printf("mode:           %d\n", u.mode);
     printf("roditelj:       %d\n", u.roditelj);
     printf("inode_br:       %d\n", u.inode_br);
     printf("velicina:       %d\n", u.tok_podataka.velicina);
     printf("\n");
+    printf("slobodni inode: %d\n", slobodni_inode(&sb.bmap, &dsb, &sb.bmap.dsa));
+    citaj_sa_diska(sb.bmap.dsa, &dsb);
+    printf("prostor_start:  %d\n", slobodni_prostor(&sb.bmap, &dsb, &sb.bmap.dsa));
     uinit_disk();
-*/
+
 //printf("%lli\n%llu\n", LONG_MAX, ULONG_MAX);
 /*
     if(g_meni() == 1)

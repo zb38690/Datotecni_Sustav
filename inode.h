@@ -12,7 +12,7 @@ struct
     unsigned int vrime_mjenjanja;
     unsigned int korisnik_id;
     unsigned int grupa_id;
-    byte mode[2];
+    unsigned short mode;
     unsigned int roditelj;
     podatkovni_tok tok_podataka;
 
