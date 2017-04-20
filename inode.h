@@ -2,6 +2,7 @@
 #define INODE_H
 #include "global.h"
 #include "podatkovni_tok.h"
+#include "user.h"
 #include <stdbool.h>
 #include <time.h>
 struct
@@ -18,7 +19,11 @@ struct
 
 } typedef inode;
 
-void postavi_vrimes(inode*); // vrime stvranja
+int init_inode(inode*, user*, unsigned int, unsigned int, void(*fn_pntr)(unsigned short*));
+void je_dir(unsigned short*);
+void je_dat(unsigned short*);
+
+static void postavi_vrimes(inode*); // vrime stvranja
 void postavi_vrimem(inode*); // vrime minjanja
 
 void postavi_mod_d(inode*, bool); // direktorij
@@ -31,4 +36,7 @@ void postavi_mod_gi(inode*, bool); // grupa izvrsi
 void postavi_mod_oc(inode*, bool); // ostali cita
 void postavi_mod_op(inode*, bool); // ostali pise
 void postavi_mod_oi(inode*, bool); // ostali izvrsi
+
+ds_adresa *inode_podatke(inode*);
+static void ucitaj_direktni(ds_adresa*, inode*, unsigned int);
 #endif // INODE_H_INCLUDED

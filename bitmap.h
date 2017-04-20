@@ -8,7 +8,7 @@ struct
     ds_adresa inode_start;
     ds_adresa prostor_start;
     ds_adresa prostor_stop;
-    void (*obradi)(struct bitmap*, const ds_adresa*, void(*fn_pntr)(byte*, byte*), ds_block*);
+    void (*obradi)(struct bitmap*, void(*fn_pntr)(byte*, byte*), ds_block*, const ds_adresa*);
 }typedef bitmap;
 
 void init_bmap(bitmap*);

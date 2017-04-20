@@ -68,6 +68,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="meni.h" />
+		<Unit filename="podatkovni_tok.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="podatkovni_tok.h" />
 		<Unit filename="user.h" />
 		<Extensions>

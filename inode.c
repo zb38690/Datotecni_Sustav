@@ -1,5 +1,31 @@
 #include "inode.h"
 
+int init_inode(inode *node, user *korisnik, unsigned int inode_br, unsigned int roditej, void (*fn_pntr)(unsigned short*))
+{
+    int i;
+    node->magic = INODE_MAGIC;
+    node->inode_br = inode_br;
+    postavi_vrimes(node);
+    node->korisnik_id = korisnik->u.id;
+    node->grupa_id = korisnik->g.id;
+    (*fn_pntr)(&(node->mode));
+    node->roditelj = roditej;
+
+    for(i = 0; i < BR_DIREKTNIH; i++)
+        node->tok_podataka.direktni[i] = 0;
+    node->tok_podataka.indirektni = NULL;
+    node->tok_podataka.d_indirektni = NULL;
+    node->tok_podataka.velicina = 0;
+}
+void je_dir(unsigned short *mod)
+{
+    (*mod) = 735;//      BIN 101 101 111 1
+}
+
+void je_dat(unsigned short *mod)
+{
+    (*mod) = 734;//      BIN 101 101 111 0
+}
 void postavi_vrimes(inode *n)
 {
 
@@ -112,4 +138,67 @@ void postavi_mod_oi(inode *node, bool everyone_x)
         node->mode |= 512;// -->        BIN 100 000 000 0
     else
         node->mode &= 511;// -->        BIN 011 111 111 1
+}
+
+ds_adresa *inode_podatke(inode *node)
+{
+    unsigned int br_bloka;
+    ds_adresa *podataka;
+
+    br_bloka = ceil(((float)node->tok_podataka.velicina)/sizeof(ds_block));
+    podataka = (ds_adresa*)malloc(br_bloka * sizeof(ds_adresa));
+
+    if(podataka)
+    {
+        if(br_bloka <= BR_DIREKTNIH)
+        {
+
+        }
+    }
+
+}
+
+static void ucitaj_direktni(ds_adresa *dsa, inode *node, unsigned int br_blokova)
+{
+    unsigned int i;
+    for(i = 0; ((i < br_blokova) && (i < BR_DIREKTNIH)); i++)
+        *(dsa+i) = node->tok_podataka.direktni[i];
+}
+
+static void ucitaj_indirektni(ds_adresa *dsa, inode *node, unsigned int br_blokova)
+{
+    ucitaj_direktni(dsa, node, br_blokova);
+    unsigned int i, j;
+    unsigned int br_indirektnih = BR_DIREKTNIH + (sizeof(ds_block)/sizeof(ds_adresa));
+    ds_block dsb;
+
+    citaj_sa_diska(node->tok_podataka.indirektni, &dsb);
+
+    for(i = BR_DIREKTNIH, j = 0; ((i < br_blokova) && (i < br_indirektnih)); i++, j++)
+        memcpy(dsa + i, dsb + (j * sizeof(ds_adresa)), sizeof(ds_adresa));
+}
+
+
+static void ucitaj_dindirektni(ds_adresa *dsa, inode *node, unsigned int br_blokova)
+{
+    ucitaj_indirektni(dsa, node, br_blokova);
+    unsigned int i, j, k;
+    unsigned int br_indirektni = BR_DIREKTNIH + (sizeof(ds_block)/sizeof(ds_adresa));
+    unsigned int br_dindirektni = (((sizeof(ds_block)/sizeof(ds_adresa)) * (sizeof(ds_block)/sizeof(ds_adresa))) + br_indirektni);
+    ds_adresa dsa_i[(sizeof(ds_block) / sizeof(ds_adresa))];
+    ds_block dsb;
+
+    citaj_sa_diska(node->tok_podataka.d_indirektni, &dsb);
+
+    for(i = 0; i < (sizeof(ds_block)/sizeof(ds_adresa)); i++)
+        memcpy(dsa_i[i], dsb + (i * sizeof(ds_adresa)), sizeof(ds_adresa));
+
+    k = br_indirektni;
+    for(i = 0; ((i < (sizeof(ds_block)/sizeof(ds_adresa))) && (k < br_blokova)); i++)
+    {
+        citaj_sa_diska(dsa_i[i], &dsb);
+        for(k, j = 0; ((k < br_blokova) && (j < (sizeof(ds_block)/sizeof(ds_adresa)))); j++, k++)
+            memcpy(dsa + k; dsb + (j * sizeof(ds_adresa)), sizeof(ds_adresa));
+
+    }
 }

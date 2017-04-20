@@ -73,7 +73,7 @@ void print_all(dir *d)
     }
 }
 
-void add(dir *d, int inode_br, char *inode_ime)
+int add(dir *d, int inode_br, char *inode_ime)
 {
     dir_ele *ptr, *tmp, *tmp2;
     ptr = (dir_ele*)malloc(sizeof(dir_ele));
@@ -88,8 +88,9 @@ void add(dir *d, int inode_br, char *inode_ime)
             d->head = ptr;
         else if(strcmp(d->head->ime_inode, ptr->ime_inode) == 0)
         {
-            printf("%s vec postoji...\n", ptr->ime_inode);
+//            printf("%s vec postoji...\n", ptr->ime_inode);
             free(ptr);
+            return -1;
         }
         else if(strcasecmp(d->head->ime_inode, ptr->ime_inode) > 0)
         {
@@ -113,9 +114,10 @@ void add(dir *d, int inode_br, char *inode_ime)
                 {
                     if(strcmp(tmp2->ime_inode, ptr->ime_inode) == 0)
                     {
-                        printf("%s vec postoji...\n", ptr->ime_inode);
+//                        printf("%s vec postoji...\n", ptr->ime_inode);
                         free(ptr);
                         tmp = NULL;
+                        return -1;
                     }
                     else if(strcasecmp(tmp2->ime_inode, ptr->ime_inode) > 0)
                     {
@@ -132,9 +134,12 @@ void add(dir *d, int inode_br, char *inode_ime)
             }
         }
 
+        return 1;
+
     }
     else
-        printf("ERROR: Greska u dodavanje elementa...\n");
+//        printf("ERROR: Greska u dodavanje elementa...\n");
+        return -2;
 }
 
 unsigned int clear_ele(dir *d, char *ime)

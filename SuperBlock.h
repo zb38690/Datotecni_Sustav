@@ -11,11 +11,14 @@ struct
    unsigned int velicina_bloka;
    unsigned int blok_shift;
    unsigned int br_blokova;
-   unsigned int koristeni_blokovi;//<--
+   unsigned int koristeni_blokovi;
+   unsigned long max_velicina;
    int magic2;
    bitmap bmap;
    //ds_adresa slobodni_inode;
    //ds_adresa slobodni_prostor;
+   unsigned int usr_id;
+   unsigned int grp_id;
    inode root_direktorij;
    int magic3;
 

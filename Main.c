@@ -4,8 +4,33 @@
 #include "format.h"
 #include "direktorij.h"
 
+void fn(inode *node, ds_adresa *dsa)
+{
+    int i;
+    for(i = 0; i < 12; i++)
+        *(dsa+i) = node->tok_podataka.direktni[i];
+}
+
 int main()
 {
+    inode node;
+    ds_adresa *dsa;
+    ds_block dsb;
+    dsa = malloc(128*4);
+    if(dsa)
+    printf("YAAHMAN\n");
+    int i;
+
+    for(i = 0; i < 128; i++)
+        memcpy(dsb + (i * sizeof(int)), &i, sizeof(int));
+
+    for(i = 0; i < 128; i++)
+        {
+            memcpy(dsa + i, dsb + (i * sizeof(int)), sizeof(int));
+        }
+
+    for(i = 0; i < 127; i++)
+        printf("%d\n", dsa[i]);
 /*
     bitmap b;
     init_bmap(&b);
@@ -85,9 +110,10 @@ int main()
                 break;
         }
     }*/
-
+/*
     superblock sb;
     inode r, u;
+    user su;
     dir d;
     dir_ele de;
     ds_block dsb;
@@ -113,7 +139,9 @@ int main()
     memcpy(&d, dsb, sizeof(dir));
     memcpy(&de, dsb + sizeof(dir), sizeof(dir_ele));
 
-//    sb.bmap.obradi(&sb.bmap, &sb.bmap.inode_start, zauzmi_bit);
+    citaj_sa_diska(u.tok_podataka.direktni[0], &dsb);
+    memcpy(&su, dsb, sizeof(user));
+
     citaj_sa_diska(sb.bmap.dsa, &dsb);
 
     printf("-------------SUPERBLOCK-------------\n");
@@ -123,6 +151,7 @@ int main()
     printf("blok_shift:         %d\n", sb.blok_shift);
     printf("br_blokova:         %d\n", sb.br_blokova);
     printf("koristeni blokovi:  %d\n", sb.koristeni_blokovi);
+    printf("max_velicina:       %d MB\n", ((sb.max_velicina/1024) / 1024));
     printf("magic2:             %x\n", sb.magic2);
     printf("bmap_start:         %d\n", sb.bmap.dsa);
     printf("bmap_inode_start:   %d\n", sb.bmap.inode_start);
@@ -155,22 +184,27 @@ int main()
     printf("roditelj:       %d\n", u.roditelj);
     printf("inode_br:       %d\n", u.inode_br);
     printf("velicina:       %d\n", u.tok_podataka.velicina);
+    printf("korisnik_ime:   %s\n", su.u.ime);
+    printf("korisnik_id:    %d\n", su.u.id);
+    printf("grupa_ime:      %s\n", su.g.ime);
+    printf("grupa_id:       %d\n", su.g.id);
+    printf("sizeof_user     %d\n", sizeof(user));
     printf("\n");
     printf("slobodni inode: %d\n", slobodni_inode(&sb.bmap, &dsb, &sb.bmap.dsa));
     citaj_sa_diska(sb.bmap.dsa, &dsb);
     printf("prostor_start:  %d\n", slobodni_prostor(&sb.bmap, &dsb, &sb.bmap.dsa));
     uinit_disk();
-
+*/
 //printf("%lli\n%llu\n", LONG_MAX, ULONG_MAX);
 /*
     if(g_meni() == 1)
     {
-        meni_1();
+        meni_1();// koristi postojeci
         uinit_disk();
     }
     else
     {
-        meni_2();
+        meni_2();// kreiraj novi
         uinit_disk();
     }
 */
