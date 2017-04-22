@@ -12,25 +12,92 @@ void fn(inode *node, ds_adresa *dsa)
 }
 
 int main()
-{
-    inode node;
-    ds_adresa *dsa;
-    ds_block dsb;
-    dsa = malloc(128*4);
-    if(dsa)
-    printf("YAAHMAN\n");
+{/*
+    sve_g *x = NULL, *z;
+    grp y;
     int i;
 
-    for(i = 0; i < 128; i++)
-        memcpy(dsb + (i * sizeof(int)), &i, sizeof(int));
+    for(i = 0; i < 11; i++)
+    {
+        y.id = i;
+        strcpy(y.ime, "test\0");
+        dodaj_g(&x, &y);
+    }
 
-    for(i = 0; i < 128; i++)
+    z = x;
+    for(i = 0; i < 11; i++)
+    {
+        printf("%d :: %s\n", z->g.id, z->g.ime);
+        z = z->next;
+    }
+
+    oslobodi_g(x);*/
+/*
+        char c[MAX_CHAR_LENGTH];
+        printf("Dali želite se pridružiti postojećoj grupi?  [d] - DA, [n] - NE\n: ");
+        fgets(c, sizeof(c), stdin);
+        c[strlen(c)-1] = '\0';
+
+while(true)
         {
-            memcpy(dsa + i, dsb + (i * sizeof(int)), sizeof(int));
-        }
+            if(strcmp(c, "d\0") == 0)
+            {
+                break;
+            }
+            else if(strcmp(c, "n\0") == 0)
+            {
+                break;
+            }
+            else
+            {
+                printf("Nevažeći unos...  [d] - DA, [n] - NE\n: ");
+                fgets(c, sizeof(c), stdin);
+                c[strlen(c)-1] = '\0';
+            }
+        }*/
 
-    for(i = 0; i < 127; i++)
-        printf("%d\n", dsa[i]);
+/*
+    inode node;
+    node.tok_podataka.velicina = (BR_DIREKTNIH + (sizeof(ds_block)/sizeof(ds_adresa)) + (((sizeof(ds_block)/sizeof(ds_adresa))) * ((sizeof(ds_block)/sizeof(ds_adresa)))))*SEKTOR;
+    int i, j, k, x;
+ //   ds_adresa *dsa;
+    init_disk("blablabla");
+    ds_block dsb;
+
+    for(i = 0; i < 12; i++)
+        node.tok_podataka.direktni[i] = i;
+
+    for(i; i < 140; i++)
+        memcpy(dsb+((i-12) * sizeof(int)), &i, sizeof(int));
+
+    node.tok_podataka.indirektni = 0;
+    node.tok_podataka.d_indirektni = 1;
+    pisi_na_disk(node.tok_podataka.indirektni, &dsb);
+
+    for(k = 2; k < 130; k++)
+        memcpy(dsb + ((k - 2) * sizeof(int)), &k, sizeof(int));
+    pisi_na_disk(node.tok_podataka.d_indirektni, &dsb);
+
+    x = i;
+    for(i, k = 2; i < 268; i++, k++)
+    {
+        for(j = 0; j < 128; j++, x++)
+        {
+            memcpy(dsb+(j * sizeof(int)), &x, sizeof(int));
+        }
+        pisi_na_disk(k, &dsb);
+    }
+
+//    dsa = inode_podatke(&node);
+    k = 0;
+    for(i = 0; i < 16524; i++)
+    {
+        if(i == inode_block(&node, i))
+            printf("%d - ", inode_block(&node, i));//k++;
+    }
+    printf("%d\n", k);
+//    free(dsa);
+    uinit_disk();*/
 /*
     bitmap b;
     init_bmap(&b);

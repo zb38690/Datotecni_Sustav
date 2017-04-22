@@ -72,6 +72,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="podatkovni_tok.h" />
+		<Unit filename="user.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="user.h" />
 		<Extensions>
 			<code_completion />

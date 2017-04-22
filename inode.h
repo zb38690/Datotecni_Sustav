@@ -38,5 +38,8 @@ void postavi_mod_op(inode*, bool); // ostali pise
 void postavi_mod_oi(inode*, bool); // ostali izvrsi
 
 ds_adresa *inode_podatke(inode*);
+ds_adresa inode_block(inode*, unsigned int);
 static void ucitaj_direktni(ds_adresa*, inode*, unsigned int);
+static void ucitaj_indirektni(ds_adresa*, inode*, unsigned int);
+static void ucitaj_dindirektni(ds_adresa*, inode*, unsigned int);
 #endif // INODE_H_INCLUDED

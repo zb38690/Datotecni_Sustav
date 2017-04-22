@@ -27,5 +27,5 @@ void brisi_dir();
 void preimenuj_dat();
 void preimenuj_dir();
 
-void mjenjaj_dat();
+void mjenjaj_udat(superblock*, inode*, user*, unsigned long*);
 #endif // DS_OPERACIJE_H_INCLUDED

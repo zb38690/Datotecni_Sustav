@@ -72,7 +72,7 @@
 	"disk_simulator.h"
 	<string.h>
 
-1492716610 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/Main.c
+1492903128 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/Main.c
 	"meni.h"
 	<limits.h>
 	<time.h>
@@ -95,7 +95,7 @@
 	"bitmap.h"
 	"inode.h"
 
-1492709538 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/inode.h
+1492872646 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/inode.h
 	"global.h"
 	"podatkovni_tok.h"
 	"user.h"
@@ -125,13 +125,14 @@
 1492620463 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/bitmap.c
 	"bitmap.h"
 
-1491996161 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/user.h
+1492901441 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/user.h
 	"global.h"
+	<stddef.h>
 
-1492705989 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/ds_operacije.c
+1492902453 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/ds_operacije.c
 	"ds_operacije.h"
 
-1492705526 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/ds_operacije.h
+1492859909 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/ds_operacije.h
 	<stdio.h>
 	"direktorij.h"
 	"inode.h"
@@ -141,7 +142,7 @@
 	"global.h"
 	<stddef.h>
 
-1492716212 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/inode.c
+1492902842 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/inode.c
 	"inode.h"
 
 1492700350 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/direktorij.c
@@ -149,4 +150,7 @@
 
 1492680508 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/podatkovni_tok.c
 	"podatkovni_tok.h"
+
+1492901098 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/user.c
+	"user.h"
 

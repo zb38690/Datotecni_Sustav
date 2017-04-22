@@ -19,14 +19,95 @@ void oneblock(ds_block *dsb)
 void dodaj_korisnika(superblock *sb)
 {
     inode k;
-    user *usr;
+    user n_usr;
     ds_block dsb;
     unsigned int br_k;
+    unsigned int br_blokova;
+    unsigned int k_blok;
+    /*
+    ds_adresa *dsa;
+
+    unsigned int nbr_blokova, sbr_blokova;//    novi broj, stari broj
+    nbr_blokova = ceil(((float)((*nova_velicina)))/sizeof(ds_block));
+    sbr_blokova = ceil(((float)(node->tok_podataka.velicina))/sizeof(ds_block))*/
 
     citaj_sa_diska((sb->bmap.inode_start + 1), &dsb);
     memcpy(&k, dsb, sizeof(inode));
 
-    br_k = (k.tok_podataka.velicina/sizeof(user));
+    br_blokova = ceil(((float)k.tok_podataka.velicina)/sizeof(ds_block));// broj blokova koji je fajl zauze
+    br_k = (k.tok_podataka.velicina/sizeof(user));//    broj korisnika
+    k_blok = ((sizeof(ds_block))/(sizeof(user)));//     broj korisnika po bloku
+
+    if((br_k + 1) <= ((br_blokova)*(k_blok)))
+    {
+        char c[MAX_CHAR_LENGTH];
+        user *uib;
+        citaj_sa_diska(inode_block(&k, br_blokova), &dsb);
+        printf("Unesite ime novog korisnika: ");
+
+        fgets(c, sizeof(c), stdin);
+        c[strlen(c)-1] = '\0';
+
+        strcpy(n_usr.u.ime, c);
+        sb->usr_id++;
+        n_usr.u.id = sb->usr_id;
+
+        printf("Dali se želite pridružit postojećoj grupi?  [d] - DA, [n] - NE\n: ");
+        fgets(c, sizeof(c), stdin);
+        c[strlen(c)-1] = '\0';
+
+        while(true)
+        {
+            if(strcmp(c, "d\0") == 0)
+            {
+                int i;
+                sve_g *sg;
+                grp g;
+
+                for(i = 0; i < br_blokova; i++)
+                {
+                    //////////////////////////////////////////////////////////////<----------------------------------
+                }
+                break;
+            }
+            else if(strcmp(c, "n\0") == 0)
+            {
+                break;
+            }
+            else
+            {
+                printf("Nevažeći unos...  [d] - DA, [n] - NE\n: ");
+                fgets(c, sizeof(c), stdin);
+                c[strlen(c)-1] = '\0';
+            }
+        }
+
+    }
+/*
+    dsa = inode_podatke(&k);
+
+    usr = (user*)malloc()*///   <------------------------------------------------------
+}
+
+void mjenjaj_udat(superblock *sb, inode *node, user *usr, unsigned long *nova_velicina)
+{
+
+
+/*    if(nbr_blokova == sbr_blokova)
+    {
+        ds_adresa *dsa;
+        unsigned int i;
+        dsa = inode_podatke(node);
+
+        for(i = 0; i < nbr_blokova; i++)
+        {
+
+        }
+    }
+    else
+    {
+
+    }*/
 }
 
 ds_adresa kreiraj_dir(superblock *sb, user *usr, dir *d)

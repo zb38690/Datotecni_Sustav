@@ -151,11 +151,14 @@ ds_adresa *inode_podatke(inode *node)
     if(podataka)
     {
         if(br_bloka <= BR_DIREKTNIH)
-        {
-
-        }
+            ucitaj_direktni(podataka, node, br_bloka);
+        else if(br_bloka <= (BR_DIREKTNIH + (sizeof(ds_block)/sizeof(ds_adresa))))
+            ucitaj_indirektni(podataka, node, br_bloka);
+        else
+            ucitaj_dindirektni(podataka, node, br_bloka);
     }
 
+    return podataka;
 }
 
 static void ucitaj_direktni(ds_adresa *dsa, inode *node, unsigned int br_blokova)
@@ -191,14 +194,56 @@ static void ucitaj_dindirektni(ds_adresa *dsa, inode *node, unsigned int br_blok
     citaj_sa_diska(node->tok_podataka.d_indirektni, &dsb);
 
     for(i = 0; i < (sizeof(ds_block)/sizeof(ds_adresa)); i++)
-        memcpy(dsa_i[i], dsb + (i * sizeof(ds_adresa)), sizeof(ds_adresa));
+        memcpy(dsa_i+i, dsb + (i * sizeof(ds_adresa)), sizeof(ds_adresa));
 
     k = br_indirektni;
     for(i = 0; ((i < (sizeof(ds_block)/sizeof(ds_adresa))) && (k < br_blokova)); i++)
     {
         citaj_sa_diska(dsa_i[i], &dsb);
         for(k, j = 0; ((k < br_blokova) && (j < (sizeof(ds_block)/sizeof(ds_adresa)))); j++, k++)
-            memcpy(dsa + k; dsb + (j * sizeof(ds_adresa)), sizeof(ds_adresa));
+            memcpy(dsa + k, dsb + (j * sizeof(ds_adresa)), sizeof(ds_adresa));
 
+    }
+}
+
+ds_adresa inode_block(inode *node, unsigned int i_bloka)
+{
+    if(i_bloka </*=*/ BR_DIREKTNIH)
+        return node->tok_podataka.direktni[(i_bloka/*-1*/)];
+    else if(i_bloka </*=*/ (BR_DIREKTNIH + (sizeof(ds_block)/sizeof(ds_adresa))))
+    {
+        ds_block dsb;
+        ds_adresa dsa[(sizeof(ds_block)/sizeof(ds_adresa))];
+        citaj_sa_diska(node->tok_podataka.indirektni, &dsb);
+        memcpy(&dsa, dsb, sizeof(dsa));
+        return dsa[((i_bloka/*-1*/) - BR_DIREKTNIH)];
+    }
+    else if(i_bloka </*=*/ ((BR_DIREKTNIH + (sizeof(ds_block)/sizeof(ds_adresa))) + ((sizeof(ds_block)/sizeof(ds_adresa)) * (sizeof(ds_block)/sizeof(ds_adresa)))))
+    {
+        ds_block dsb;
+        ds_adresa dsa[(sizeof(ds_block)/sizeof(ds_adresa))];
+        unsigned int i;
+        citaj_sa_diska(node->tok_podataka.d_indirektni, &dsb);
+        memcpy(dsa, dsb, sizeof(dsa));
+
+        //br_bloka--;
+
+        i = i_bloka - (BR_DIREKTNIH + (sizeof(ds_block)/sizeof(ds_adresa)));
+        if(i < (sizeof(ds_block)/sizeof(ds_adresa)))
+        {
+            citaj_sa_diska((dsa[0]), &dsb);
+            memcpy(dsa, dsb, sizeof(dsa));
+            return dsa[i];
+        }
+
+        i /= (sizeof(ds_block)/sizeof(ds_adresa));
+
+        citaj_sa_diska((dsa[i]), &dsb);
+        memcpy(dsa, dsb, sizeof(dsa));
+
+        i *= (sizeof(ds_block)/sizeof(ds_adresa));
+        i = ((i_bloka - (BR_DIREKTNIH + (sizeof(ds_block)/sizeof(ds_adresa)))) - i);
+
+        return dsa[i];
     }
 }
