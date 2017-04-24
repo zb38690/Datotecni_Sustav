@@ -10,7 +10,7 @@
 void nulblock(ds_block*);
 void oneblock(ds_block*);
 
-void dodaj_korisnika(superblock*);
+int dodaj_korisnika(superblock*);
 
 void kreiraj_dat();
 ds_adresa kreiraj_dir(superblock*, user*, dir*);

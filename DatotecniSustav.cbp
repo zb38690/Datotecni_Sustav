@@ -39,6 +39,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="bitmap.h" />
+		<Unit filename="bzvz.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="direktorij.c">
 			<Option compilerVar="CC" />
 		</Unit>

@@ -13,8 +13,8 @@ int init_inode(inode *node, user *korisnik, unsigned int inode_br, unsigned int 
 
     for(i = 0; i < BR_DIREKTNIH; i++)
         node->tok_podataka.direktni[i] = 0;
-    node->tok_podataka.indirektni = NULL;
-    node->tok_podataka.d_indirektni = NULL;
+    node->tok_podataka.indirektni = 0;
+    node->tok_podataka.d_indirektni = 0;
     node->tok_podataka.velicina = 0;
 }
 void je_dir(unsigned short *mod)
@@ -245,5 +245,216 @@ ds_adresa inode_block(inode *node, unsigned int i_bloka)
         i = ((i_bloka - (BR_DIREKTNIH + (sizeof(ds_block)/sizeof(ds_adresa)))) - i);
 
         return dsa[i];
+    }
+}
+
+int inode_postavi_a(inode *node, ds_adresa nova, bitmap *bmap)
+{
+    unsigned int br_blokova = ceil(((float)node->tok_podataka.velicina)/sizeof(ds_block));// broj blokova koliko pokazuje inode
+
+    if(br_blokova < BR_DIREKTNIH)
+    {
+        node->tok_podataka.direktni[br_blokova] = nova;
+        return 1;
+    }
+    else if(br_blokova < (BR_DIREKTNIH + (sizeof(ds_block)/sizeof(ds_adresa))))
+    {
+        ds_block dsb;
+        ds_adresa dsa;
+        if(br_blokova == BR_DIREKTNIH)
+        {
+            ds_adresa dsab;// dsab = ds_adresa bitmape
+            ds_block dsbb;      // dsbb = ds_block bitmape
+            dsab = bmap->dsa;
+
+            dsab = bmap->dsa + (nova/(sizeof(ds_block) * 8));
+            citaj_sa_diska(dsab, &dsbb);
+            bmap->obradi(bmap, zauzmi_bit, &dsbb, &nova);
+            dsa = slobodni_prostor(bmap, &dsbb, &dsab);
+            dsab++;
+
+            while((dsa < bmap->prostor_start) && (dsab < bmap->inode_start))
+            {
+                citaj_sa_diska(dsab, &dsb);
+                dsa = slobodni_prostor(bmap, &dsb, &dsab);
+                dsab++;
+            }
+
+            if(dsa < bmap->prostor_start)
+            {
+                return -1;
+            }
+            else
+            {
+                node->tok_podataka.indirektni = dsa;
+                if(dsab == (bmap->dsa + (nova/(sizeof(ds_block) * 8))))
+                {
+                    bmap->obradi(bmap, zauzmi_bit, &dsbb, dsa);
+                    pisi_na_disk(dsab, &dsbb);
+                }
+                else
+                {
+                    bmap->obradi(bmap, zauzmi_bit, &dsb, dsa);
+                    pisi_na_disk(dsab, &dsb);
+                    dsab = bmap->dsa + (nova/(sizeof(ds_block) * 8));
+                    pisi_na_disk(dsab, &dsbb);
+
+                }
+                nulblock(&dsb);
+                memcpy(dsb, &nova, sizeof(ds_adresa));
+                pisi_na_disk(dsa, &dsb);
+            }
+            return 1;
+        }
+        else
+        {
+            citaj_sa_diska(node->tok_podataka.indirektni, &dsb);
+            memcpy(dsa + ((br_blokova - BR_DIREKTNIH) * sizeof(ds_adresa)), &nova, sizeof(ds_adresa));
+            pisi_na_disk(node->tok_podataka.indirektni, &dsb);
+            return 1;
+        }
+
+    }
+    else if(br_blokova < (((BR_DIREKTNIH + (sizeof(ds_block)/sizeof(ds_adresa))) + ((sizeof(ds_block)/sizeof(ds_adresa)) * (sizeof(ds_block)/sizeof(ds_adresa))))))
+    {
+        if(br_blokova == (BR_DIREKTNIH + (sizeof(ds_block)/sizeof(ds_adresa))))
+        {
+            ds_block dsb;
+            ds_adresa aa, ab, dsa;// A - d_indirektni, B - indirektni
+
+            dsa = bmap_bloka(bmap, &nova);
+            citaj_sa_diska(dsa, &dsb);
+            bmap->obradi(bmap, zauzmi_bit, &dsb, &nova);
+            pisi_na_disk(dsa, &dsb);
+
+            dsa = bmap->dsa;
+            citaj_sa_diska(dsa, &dsb);
+
+
+            aa = slobodni_prostor(bmap, &dsb, &dsa);
+            dsa++;
+
+            while((aa < bmap->prostor_start) && (dsa < bmap->inode_start))// trazi adresu za A
+            {
+                citaj_sa_diska(dsa, &dsb);
+                aa = slobodni_prostor(bmap, &dsb, &dsa);
+                dsa++;
+            }
+
+            if(aa < bmap->prostor_start)
+            {
+                dsa = bmap_bloka(bmap, &nova);
+                citaj_sa_diska(dsa, &dsb);
+                bmap->obradi(bmap, oslobodi_bit, &dsb, &nova);
+                pisi_na_disk(dsa, &dsb);
+                return -1;
+            }
+            dsa--;
+            bmap->obradi(bmap, zauzmi_bit, &dsb, &aa);
+            pisi_na_disk(dsa, &dsb);
+
+            ab = slobodni_prostor(bmap, &dsb, &dsa);
+            dsa++;
+
+            while((ab < bmap->prostor_start) && (dsa < bmap->inode_start))// trazi adresu za B
+            {
+                citaj_sa_diska(dsa, &dsb);
+                ab = slobodni_prostor(bmap, &dsb, &dsa);
+                dsa++;
+            }
+            if(ab < bmap->prostor_start)
+            {
+                dsa = bmap_bloka(bmap, &nova);
+                citaj_sa_diska(dsa, &dsb);
+                bmap->obradi(bmap, oslobodi_bit, &dsb, &nova);
+                pisi_na_disk(dsa, &dsb);
+
+                dsa = bmap_bloka(bmap, &aa);
+                citaj_sa_diska(dsa, &dsb);
+                bmap->obradi(bmap, oslobodi_bit, &dsb, &aa);
+                pisi_na_disk(dsa, &dsb);
+                return -1;
+            }
+
+            dsa--;
+            bmap->obradi(bmap, zauzmi_bit, &dsb, &ab);
+            pisi_na_disk(dsa, &dsb);
+
+
+            node->tok_podataka.d_indirektni = aa;
+
+            nulblock(&dsb);
+            memcpy(dsb, &ab, sizeof(ds_adresa));
+            pisi_na_disk(aa, &dsb);
+
+            nulblock(&dsb);
+            memcpy(dsb, &nova, sizeof(ds_adresa));
+            pisi_na_disk(ab, &dsb);
+            return 1;
+        }
+        else
+        {
+            br_blokova -= (BR_DIREKTNIH + (sizeof(ds_block)/sizeof(ds_adresa)));
+            ds_block dsb;
+            ds_adresa dsa;
+            unsigned int dii = (br_blokova/(sizeof(ds_block)/sizeof(ds_adresa)));// double indirekt index
+            unsigned int ii = br_blokova%(sizeof(ds_block)/sizeof(ds_adresa));//    indirekt index
+
+            dsa = bmap_bloka(bmap, &nova);
+            citaj_sa_diska(dsa, &dsb);
+            bmap->obradi(bmap, zauzmi_bit, &dsb, &nova);
+            pisi_na_disk(dsa, &dsb);
+
+            if(ii == 0)
+            {
+                ds_adresa ai;// adresa indirektnog bloka
+                dsa = bmap->dsa;
+                citaj_sa_diska(dsa, &dsb);
+
+                ai = slobodni_prostor(bmap, &dsb, &dsa);
+                dsa++;
+
+                while((ai < bmap->prostor_start) && (dsa < bmap->inode_start))
+                {
+                    citaj_sa_diska(dsa, &dsb);
+                    ai = slobodni_prostor(bmap, &dsb, &dsa);
+                    dsa++;
+                }
+
+                if(ai < bmap->prostor_start)
+                {
+                    dsa = bmap_bloka(bmap, &nova);
+                    citaj_sa_diska(dsa, &dsb);
+                    bmap->obradi(bmap, oslobodi_bit, &dsb, &nova);
+                    pisi_na_disk(dsa, &dsb);
+                    return -1;
+                }
+
+                dsa--;
+                bmap->obradi(bmap, zauzmi_bit, &dsb, &ai);
+                pisi_na_disk(dsa, &dsb);
+
+                citaj_sa_diska(node->tok_podataka.d_indirektni, &dsb);
+                memcpy(dsa + (dii*sizeof(ds_adresa)), &ai, sizeof(ds_adresa));
+                pisi_na_disk(node->tok_podataka.d_indirektni, &dsb);
+
+                nulblock(&dsb);
+                memcpy(dsb, &nova, sizeof(ds_adresa));
+                pisi_na_disk(ai, &dsb);
+
+                return 1;
+            }
+
+            else
+            {
+                citaj_sa_diska(node->tok_podataka.d_indirektni, &dsb);
+                memcpy(&dsa, dsb + (dii * (sizeof(ds_adresa))), sizeof(ds_adresa));
+                citaj_sa_diska(dsa, &dsb);
+                mempcpy(dsb + (ii * (sizeof(ds_adresa))), &nova, sizeof(ds_adresa));
+                pisi_na_disk(dsa, &dsb);
+            }
+
+        }
+
     }
 }

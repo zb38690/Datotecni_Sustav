@@ -33,7 +33,7 @@ int dodaj_g(sve_g **head, grp *nova)
     return -1;
 }
 
-int stvori_g(sve_g **head, grp *nova)
+static int stvori_g(sve_g **head, grp *nova)
 {
     sve_g *tmp;
     tmp = (sve_g*)malloc(sizeof(sve_g));
@@ -57,4 +57,43 @@ void oslobodi_g(sve_g *head)
             head = head->next;
             free(tmp);
         }
+}
+
+
+void printaj_sg(sve_g *head)
+{
+    sve_g *tmp = head;
+    printf("\n----------------------------------------------\n");
+    printf("                   GRUPE                      \n");
+    printf("----------------------------------------------\n");
+    while(tmp != NULL)
+    {
+        if(tmp->g.id < 10)
+           printf("ID:  %d     IME: %s\n", tmp->g.id, tmp->g.ime);
+        else
+            printf("ID: %d     IME: %s\n", tmp->g.id, tmp->g.ime);
+
+        tmp = tmp->next;
+    }
+    printf("----------------------------------------------\n");
+
+}
+
+int dohvati_sgime(unsigned int *id, user *usr, sve_g *head)
+{
+    sve_g *tmp = head;
+
+    while(tmp != NULL)
+    {
+        if(tmp->g.id == (*id))
+        {
+            strcpy(usr->g.ime, tmp->g.ime);
+            usr->g.id = tmp->g.id;
+            return 1;
+        }
+        else
+            tmp = tmp->next;
+    }
+
+    return -1;
 }

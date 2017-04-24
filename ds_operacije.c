@@ -16,7 +16,7 @@ void oneblock(ds_block *dsb)
         (*dsb)[i] = 255;
 }
 
-void dodaj_korisnika(superblock *sb)
+int dodaj_korisnika(superblock *sb)
 {
     inode k;
     user n_usr;
@@ -42,7 +42,7 @@ void dodaj_korisnika(superblock *sb)
     {
         char c[MAX_CHAR_LENGTH];
         user *uib;
-        citaj_sa_diska(inode_block(&k, br_blokova), &dsb);
+        citaj_sa_diska(inode_block(&k, (br_blokova - 1)), &dsb);
         printf("Unesite ime novog korisnika: ");
 
         fgets(c, sizeof(c), stdin);
@@ -60,13 +60,47 @@ void dodaj_korisnika(superblock *sb)
         {
             if(strcmp(c, "d\0") == 0)
             {
-                int i;
+                unsigned int i, j;
                 sve_g *sg;
                 grp g;
 
                 for(i = 0; i < br_blokova; i++)
                 {
-                    //////////////////////////////////////////////////////////////<----------------------------------
+                    citaj_sa_diska(inode_block(&k, i), &dsb);
+                    if(br_k < k_blok)
+                    {
+                        uib = (user*)malloc(br_k * sizeof(user));
+                        if(uib)
+                        {
+                            unsigned int izbor;
+                            for(j = 0; j < br_k; j++)
+                            {
+                                g.id = uib[i].g.id;
+                                strcpy(g.ime, uib[i].g.ime);
+                                if(dodaj_g(&sg, &g) < 0)
+                                    return -1;
+                            }
+                            printaj_sg(sg);
+                            printf("Unesite ID grupe: ");
+                            fgets(c, sizeof(c), stdin);
+                            c[strlen(c)-1] = '\0';
+                            izbor = strtol(c, NULL, 10);
+                            while(dohvati_sgime(&izbor, &n_usr, sg) < 0)
+                            {
+                                printf("Nevažeći unos...Pokušajte ponovno...\n: ");
+                                fgets(c, sizeof(c), stdin);
+                                c[strlen(c)-1] = '\0';
+                                izbor = strtol(c, NULL, 10);
+                            }
+
+                            if((br_k + 1) <= ((br_blokova)*(k_blok)))
+                            {
+
+                            }
+                        }
+                        else
+                            return -1;
+                    }
                 }
                 break;
             }

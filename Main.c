@@ -13,25 +13,41 @@ void fn(inode *node, ds_adresa *dsa)
 
 int main()
 {/*
+    user u[5], *pnt;
+    int i;
+
+    for(i = 0; i < 5; i++)
+        u[i].g.id = i;
+
+    pnt = (user*)malloc(5 * sizeof(user));
+
+    for(i = 0; i < 5; i++)
+        pnt[i].g.id = u[i].g.id;
+    for(i = 0; i < 5; i++)
+        printf("%d - ", pnt[i].g.id);
+
+    free(pnt);*/
+
+/*
     sve_g *x = NULL, *z;
     grp y;
     int i;
+    char c[MAX_CHAR_LENGTH];
 
     for(i = 0; i < 11; i++)
     {
         y.id = i;
-        strcpy(y.ime, "test\0");
+        if(i == 5)
+            strcpy(y.ime, "Zdravko\0");
+        else
+            strcpy(y.ime, "test\0");
         dodaj_g(&x, &y);
     }
 
     z = x;
-    for(i = 0; i < 11; i++)
-    {
-        printf("%d :: %s\n", z->g.id, z->g.ime);
-        z = z->next;
-    }
-
+    printaj_sg(x);
     oslobodi_g(x);*/
+
 /*
         char c[MAX_CHAR_LENGTH];
         printf("Dali želite se pridružiti postojećoj grupi?  [d] - DA, [n] - NE\n: ");
@@ -177,17 +193,17 @@ while(true)
                 break;
         }
     }*/
-/*
+
     superblock sb;
     inode r, u;
-    user su;
+    user su, *up;
     dir d;
     dir_ele de;
     ds_block dsb;
     ds_adresa dsa;
 
     init_disk("blablabla");
-    format();
+//    format();
 
     dsa = 0;
 
@@ -227,6 +243,8 @@ while(true)
     printf("magic3:             %x\n", sb.magic3);
     printf("root_magic:         %x\n", sb.root_direktorij.magic);
     printf("root_inode_br:      %d\n", sb.root_direktorij.inode_br);
+    printf("user id:            %d\n", sb.usr_id);
+    printf("group id:           %d\n", sb.grp_id);
     printf("\n");
     printf("-------------INODE_ROOT-------------\n");
     printf("magic:          %x\n", r.magic);
@@ -260,8 +278,21 @@ while(true)
     printf("slobodni inode: %d\n", slobodni_inode(&sb.bmap, &dsb, &sb.bmap.dsa));
     citaj_sa_diska(sb.bmap.dsa, &dsb);
     printf("prostor_start:  %d\n", slobodni_prostor(&sb.bmap, &dsb, &sb.bmap.dsa));
+
+    up = (user*)malloc((u.tok_podataka.velicina / sizeof(user)) * sizeof(user));
+
+    for(dsa = 0; dsa < ceil((float)u.tok_podataka.velicina)/sizeof(ds_block))
+    {
+        citaj_sa_diska(dsa, &dsb);
+        memcpy()
+    }
+
+    for(dsa = 0; dsa < (u.tok_podataka.velicina / sizeof(user)); dsa++)
+        printf("%d :: %s -- %d :: %s\n", up[dsa].u.id, up[dsa].u.ime, up[dsa].g.id, up[dsa].g.ime);
+    free(up);
+    printf("\n\n%d\n", bzvzx(&sb));
     uinit_disk();
-*/
+
 //printf("%lli\n%llu\n", LONG_MAX, ULONG_MAX);
 /*
     if(g_meni() == 1)

@@ -27,6 +27,8 @@ typedef struct sve_grupe
 }sve_g;
 
 int dodaj_g(sve_g**, grp*);
-static int stvori_g(sve_g **, grp *);
+static int stvori_g(sve_g**, grp*);
+void printaj_sg(sve_g*);
+int dohvati_sgime(unsigned int*, user*, sve_g*);
 void oslobodi_g(sve_g*);
 #endif // USER_H_INCLUDED

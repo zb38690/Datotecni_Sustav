@@ -72,7 +72,7 @@
 	"disk_simulator.h"
 	<string.h>
 
-1492903128 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/Main.c
+1493044417 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/Main.c
 	"meni.h"
 	<limits.h>
 	<time.h>
@@ -95,10 +95,11 @@
 	"bitmap.h"
 	"inode.h"
 
-1492872646 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/inode.h
+1492978926 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/inode.h
 	"global.h"
 	"podatkovni_tok.h"
 	"user.h"
+	"bitmap.h"
 	<stdbool.h>
 	<time.h>
 
@@ -125,14 +126,14 @@
 1492620463 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/bitmap.c
 	"bitmap.h"
 
-1492901441 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/user.h
+1492958866 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/user.h
 	"global.h"
 	<stddef.h>
 
-1492902453 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/ds_operacije.c
+1492960518 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/ds_operacije.c
 	"ds_operacije.h"
 
-1492859909 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/ds_operacije.h
+1492954985 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/ds_operacije.h
 	<stdio.h>
 	"direktorij.h"
 	"inode.h"
@@ -142,7 +143,7 @@
 	"global.h"
 	<stddef.h>
 
-1492902842 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/inode.c
+1493044318 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/inode.c
 	"inode.h"
 
 1492700350 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/direktorij.c
@@ -151,6 +152,14 @@
 1492680508 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/podatkovni_tok.c
 	"podatkovni_tok.h"
 
-1492901098 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/user.c
+1492971206 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/user.c
 	"user.h"
+
+1493045097 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/bzvz.c
+	"SuperBlock.h"
+	<stdio.h>
+
+1492970002 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/bzvz.c
+	"SuperBlock.h"
+	<stdio.h>
 

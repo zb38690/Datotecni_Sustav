@@ -3,6 +3,7 @@
 #include "global.h"
 #include "podatkovni_tok.h"
 #include "user.h"
+#include "bitmap.h"
 #include <stdbool.h>
 #include <time.h>
 struct
@@ -39,6 +40,7 @@ void postavi_mod_oi(inode*, bool); // ostali izvrsi
 
 ds_adresa *inode_podatke(inode*);
 ds_adresa inode_block(inode*, unsigned int);
+int inode_postavi_a(inode*, ds_adresa, bitmap*);
 static void ucitaj_direktni(ds_adresa*, inode*, unsigned int);
 static void ucitaj_indirektni(ds_adresa*, inode*, unsigned int);
 static void ucitaj_dindirektni(ds_adresa*, inode*, unsigned int);
