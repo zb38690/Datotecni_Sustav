@@ -283,8 +283,11 @@ while(true)
 
     for(dsa = 0; dsa < ceil((float)u.tok_podataka.velicina)/sizeof(ds_block))
     {
-        citaj_sa_diska(dsa, &dsb);
-        memcpy()
+        if(dsa < BR_DIREKTNIH)
+        {
+            citaj_sa_diska(u.tok_podataka.direktni[i], &dsb);
+            memcpy()
+        }
     }
 
     for(dsa = 0; dsa < (u.tok_podataka.velicina / sizeof(user)); dsa++)
