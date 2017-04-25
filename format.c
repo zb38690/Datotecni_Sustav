@@ -7,7 +7,7 @@ void format()
     ds_block dsb;
 
 
-    char c[29] = "Jednostavni Datotecni Sustav\0";
+    char c[MAX_CHAR_LENGTH] = "Jednostavni Datotecni Sustav\0";
 
     strcpy(sb.ds_ime, c);
     sb.magic1 = SUPERBLOCK_MAGIC1;
@@ -32,11 +32,8 @@ bool formatiran()
 {
     ds_block dsb;
     superblock sb;
-    ds_adresa a;
 
-    a = 0;
-
-    citaj_sa_diska(a, &dsb);
+    citaj_sa_diska(0, &dsb);
 
     memcpy(&sb, dsb, sizeof(superblock));
 
@@ -102,14 +99,6 @@ void postavi_root(superblock *sb)
     strcpy(su.g.ime, ime);
     su.g.id = 0;
 
-/*    postavi_vrimes(&root);
-
-    root.magic = INODE_MAGIC;
-    root.korisnik_id = su.u.id;
-    root.grupa_id = su.g.id;
-    root.mode = 735;//      BIN 101 101 111 1
-    root.inode_br = 0;
-    root.roditelj = 0;*/
     init_inode(&root, &su, 0, 0, je_dir);
     root.tok_podataka.velicina = (sizeof(dir) + sizeof(dir_ele));
 
@@ -122,14 +111,6 @@ void postavi_root(superblock *sb)
 
     sb->root_direktorij = root;
 
-/*    postavi_vrimes(&users);
-
-    users.magic = INODE_MAGIC;
-    users.korisnik_id = su.u.id;
-    users.grupa_id = su.g.id;
-    users.mode = 734;//     BIN 101 101 111 0
-    users.inode_br = 1;
-    users.roditelj = root.inode_br;*/
     init_inode(&users, &su, 1, 0, je_dat);
     users.tok_podataka.direktni[0] = sb->bmap.prostor_start;
     users.tok_podataka.velicina = sizeof(user);

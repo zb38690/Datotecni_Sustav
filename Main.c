@@ -193,7 +193,7 @@ while(true)
                 break;
         }
     }*/
-
+/*
     superblock sb;
     inode r, u;
     user su, *up;
@@ -201,6 +201,7 @@ while(true)
     dir_ele de;
     ds_block dsb;
     ds_adresa dsa;
+    unsigned int vp, bb, uub, i;
 
     init_disk("blablabla");
 //    format();
@@ -279,36 +280,121 @@ while(true)
     citaj_sa_diska(sb.bmap.dsa, &dsb);
     printf("prostor_start:  %d\n", slobodni_prostor(&sb.bmap, &dsb, &sb.bmap.dsa));
 
-    up = (user*)malloc((u.tok_podataka.velicina / sizeof(user)) * sizeof(user));
+    vp = u.tok_podataka.velicina;
+    bb = ceil(((float)u.tok_podataka.velicina)/sizeof(ds_block));
+    uub = ((sizeof(ds_block)/sizeof(user)) * sizeof(user));
+    up = (user*)malloc(vp);
 
-    for(dsa = 0; dsa < ceil((float)u.tok_podataka.velicina)/sizeof(ds_block))
+    for(dsa = 0; dsa < bb; dsa++)
     {
-        if(dsa < BR_DIREKTNIH)
+        citaj_sa_diska(inode_block(&u, dsa), dsb);
+
+        if(sizeof(ds_block) <= vp)
         {
-            citaj_sa_diska(u.tok_podataka.direktni[i], &dsb);
-            memcpy()
+            memcpy(up + (dsa * (uub / sizeof(user))), dsb, uub);
+            vp -= uub;
+        }
+        else
+        {
+            memcpy(up + (dsa * (uub / sizeof(user))), dsb, vp);
         }
     }
 
     for(dsa = 0; dsa < (u.tok_podataka.velicina / sizeof(user)); dsa++)
         printf("%d :: %s -- %d :: %s\n", up[dsa].u.id, up[dsa].u.ime, up[dsa].g.id, up[dsa].g.ime);
     free(up);
-    printf("\n\n%d\n", bzvzx(&sb));
-    uinit_disk();
+
+    for(i = 0; i < 7; i++)
+    {
+        printf("\n\n%d\n", dodaj_korisnika(&sb));
+        citaj_sa_diska(3, &dsb);
+        memcpy(&u, dsb, sizeof(inode));
+
+        vp = u.tok_podataka.velicina;
+        bb = ceil(((float)u.tok_podataka.velicina)/sizeof(ds_block));
+        uub = ((sizeof(ds_block)/sizeof(user)) * sizeof(user));
+        up = (user*)malloc(vp);
+
+        for(dsa = 0; dsa < bb; dsa++)
+        {
+            citaj_sa_diska(inode_block(&u, dsa), dsb);
+
+            if(sizeof(ds_block) <= vp)
+            {
+                memcpy(up + (dsa * (uub / sizeof(user))), dsb, uub);
+                vp -= uub;
+            }
+            else
+            {
+                memcpy(up + (dsa * (uub / sizeof(user))), dsb, vp);
+            }
+        }
+
+        for(vp = 0; vp < (u.tok_podataka.velicina / sizeof(user)); vp++)
+            printf("%d :: %s -- %d :: %s\n", up[vp].u.id, up[vp].u.ime, up[vp].g.id, up[vp].g.ime);
+    }
+
+    uinit_disk();*/
 
 //printf("%lli\n%llu\n", LONG_MAX, ULONG_MAX);
 /*
     if(g_meni() == 1)
     {
-        meni_1();// koristi postojeci
-        uinit_disk();
+        if(!meni_1())// koristi postojeci
+        {
+            uinit_disk();
+            return -1;
+        }
+
     }
     else
     {
-        meni_2();// kreiraj novi
-        uinit_disk();
+        if(!meni_2())// kreiraj novi
+        {
+           uinit_disk();
+           return -1;
+        }
+        char c[MAX_CHAR_LENGTH];
+        user novi, tmp;
+        inode users;
+        superblock sb;
+        ds_block dsb;
+
+        format();
+
+        printf("\n");
+        citaj_sa_diska(0, &dsb);
+        memcpy(&sb, dsb, sizeof(superblock));
+        printf("Unesite svoje ime: ");
+
+        fgets(c, sizeof(c), stdin);
+        c[strlen(c)-1] = '\0';
+        strcpy(novi.u.ime, c);
+        sb.usr_id++;
+        novi.u.id = sb.usr_id;
+
+        printf("Unesite ime grupe: ");
+        fgets(c, sizeof(c), stdin);
+        c[strlen(c)-1] = '\0';
+        strcpy(novi.g.ime, c);
+        sb.grp_id++;
+        novi.g.id = sb.grp_id;
+
+        citaj_sa_diska((sb.bmap.inode_start + 1), &dsb);
+        memcpy(&users, dsb, sizeof(inode));
+        citaj_sa_diska(users.tok_podataka.direktni[0], &dsb);
+        memcpy(dsb + sizeof(user), &novi, sizeof(user));
+        users.tok_podataka.velicina = (2*sizeof(user));
+
+        pisi_na_disk(users.tok_podataka.direktni[0], &dsb);
+
+        memcpy(dsb, &users, sizeof(inode));
+        pisi_na_disk((sb.bmap.inode_start + 1), &dsb);
+
+        memcpy(dsb, &sb, sizeof(superblock));
+        pisi_na_disk(0, &dsb);
     }
-*/
+    uinit_disk();*/
 /*
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);

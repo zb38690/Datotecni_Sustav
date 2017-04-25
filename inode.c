@@ -208,25 +208,23 @@ static void ucitaj_dindirektni(ds_adresa *dsa, inode *node, unsigned int br_blok
 
 ds_adresa inode_block(inode *node, unsigned int i_bloka)
 {
-    if(i_bloka </*=*/ BR_DIREKTNIH)
-        return node->tok_podataka.direktni[(i_bloka/*-1*/)];
-    else if(i_bloka </*=*/ (BR_DIREKTNIH + (sizeof(ds_block)/sizeof(ds_adresa))))
+    if(i_bloka < BR_DIREKTNIH)
+        return node->tok_podataka.direktni[(i_bloka)];
+    else if(i_bloka < (BR_DIREKTNIH + (sizeof(ds_block)/sizeof(ds_adresa))))
     {
         ds_block dsb;
         ds_adresa dsa[(sizeof(ds_block)/sizeof(ds_adresa))];
         citaj_sa_diska(node->tok_podataka.indirektni, &dsb);
         memcpy(&dsa, dsb, sizeof(dsa));
-        return dsa[((i_bloka/*-1*/) - BR_DIREKTNIH)];
+        return dsa[((i_bloka) - BR_DIREKTNIH)];
     }
-    else if(i_bloka </*=*/ ((BR_DIREKTNIH + (sizeof(ds_block)/sizeof(ds_adresa))) + ((sizeof(ds_block)/sizeof(ds_adresa)) * (sizeof(ds_block)/sizeof(ds_adresa)))))
+    else if(i_bloka < ((BR_DIREKTNIH + (sizeof(ds_block)/sizeof(ds_adresa))) + ((sizeof(ds_block)/sizeof(ds_adresa)) * (sizeof(ds_block)/sizeof(ds_adresa)))))
     {
         ds_block dsb;
         ds_adresa dsa[(sizeof(ds_block)/sizeof(ds_adresa))];
         unsigned int i;
         citaj_sa_diska(node->tok_podataka.d_indirektni, &dsb);
         memcpy(dsa, dsb, sizeof(dsa));
-
-        //br_bloka--;
 
         i = i_bloka - (BR_DIREKTNIH + (sizeof(ds_block)/sizeof(ds_adresa)));
         if(i < (sizeof(ds_block)/sizeof(ds_adresa)))

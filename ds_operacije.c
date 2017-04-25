@@ -21,15 +21,10 @@ int dodaj_korisnika(superblock *sb)
     inode k;
     user n_usr;
     ds_block dsb;
+    char c[MAX_CHAR_LENGTH];
     unsigned int br_k;
     unsigned int br_blokova;
     unsigned int k_blok;
-    /*
-    ds_adresa *dsa;
-
-    unsigned int nbr_blokova, sbr_blokova;//    novi broj, stari broj
-    nbr_blokova = ceil(((float)((*nova_velicina)))/sizeof(ds_block));
-    sbr_blokova = ceil(((float)(node->tok_podataka.velicina))/sizeof(ds_block))*/
 
     citaj_sa_diska((sb->bmap.inode_start + 1), &dsb);
     memcpy(&k, dsb, sizeof(inode));
@@ -38,89 +33,167 @@ int dodaj_korisnika(superblock *sb)
     br_k = (k.tok_podataka.velicina/sizeof(user));//    broj korisnika
     k_blok = ((sizeof(ds_block))/(sizeof(user)));//     broj korisnika po bloku
 
-    if((br_k + 1) <= ((br_blokova)*(k_blok)))
+    printf("Unesite ime novog korisnika: ");
+
+    fgets(c, sizeof(c), stdin);
+    c[strlen(c)-1] = '\0';
+
+    strcpy(n_usr.u.ime, c);
+    n_usr.u.id = (sb->usr_id + 1);
+    sb->usr_id++;
+
+    printf("Dali se želite pridružit postojećoj grupi?  [d] - DA, [n] - NE\n: ");
+    fgets(c, sizeof(c), stdin);
+    c[strlen(c)-1] = '\0';
+
+    while(true)
     {
-        char c[MAX_CHAR_LENGTH];
-        user *uib;
-        citaj_sa_diska(inode_block(&k, (br_blokova - 1)), &dsb);
-        printf("Unesite ime novog korisnika: ");
-
-        fgets(c, sizeof(c), stdin);
-        c[strlen(c)-1] = '\0';
-
-        strcpy(n_usr.u.ime, c);
-        sb->usr_id++;
-        n_usr.u.id = sb->usr_id;
-
-        printf("Dali se želite pridružit postojećoj grupi?  [d] - DA, [n] - NE\n: ");
-        fgets(c, sizeof(c), stdin);
-        c[strlen(c)-1] = '\0';
-
-        while(true)
+        if(strcmp(c, "d\0") == 0)
         {
-            if(strcmp(c, "d\0") == 0)
+            unsigned int i, j;
+            sve_g *sg = NULL;
+            grp g;
+            user *uub;//    useri u bloku
+
+            for(i = 0; i < br_blokova; i++)
             {
-                unsigned int i, j;
-                sve_g *sg;
-                grp g;
+                citaj_sa_diska(inode_block(&k, i), &dsb);
 
-                for(i = 0; i < br_blokova; i++)
+                if(br_k < k_blok)
                 {
-                    citaj_sa_diska(inode_block(&k, i), &dsb);
-                    if(br_k < k_blok)
+                    uub = (user*)malloc(br_k * sizeof(user));
+                    if(uub)
                     {
-                        uib = (user*)malloc(br_k * sizeof(user));
-                        if(uib)
+                        memcpy(uub, dsb, (br_k * sizeof(user)));
+                        for(j = 0; j < br_k; j++)
                         {
-                            unsigned int izbor;
-                            for(j = 0; j < br_k; j++)
+                            g.id = uub[j].g.id;
+                            strcpy(g.ime, uub[j].g.ime);
+                            if(dodaj_g(&sg, &g) < 0)
                             {
-                                g.id = uib[i].g.id;
-                                strcpy(g.ime, uib[i].g.ime);
-                                if(dodaj_g(&sg, &g) < 0)
-                                    return -1;
-                            }
-                            printaj_sg(sg);
-                            printf("Unesite ID grupe: ");
-                            fgets(c, sizeof(c), stdin);
-                            c[strlen(c)-1] = '\0';
-                            izbor = strtol(c, NULL, 10);
-                            while(dohvati_sgime(&izbor, &n_usr, sg) < 0)
-                            {
-                                printf("Nevažeći unos...Pokušajte ponovno...\n: ");
-                                fgets(c, sizeof(c), stdin);
-                                c[strlen(c)-1] = '\0';
-                                izbor = strtol(c, NULL, 10);
-                            }
-
-                            if((br_k + 1) <= ((br_blokova)*(k_blok)))
-                            {
-
+                                free(uub);
+                                return -1;
                             }
                         }
-                        else
-                            return -1;
                     }
+                    else
+                        return -1;
+
+                    free(uub);
                 }
-                break;
+                else
+                {
+                    uub = (user*)malloc(k_blok * sizeof(user));
+                    memcpy(uub, dsb, (k_blok * sizeof(user)));
+                    for(j = 0; j < k_blok; j++)
+                    {
+                        g.id = uub[j].g.id;
+                        strcpy(g.ime, uub[j].g.ime);
+                        if(dodaj_g(&sg, &g) < 0)
+                        {
+                            free(uub);
+                            return -1;
+                        }
+                    }
+                    free(uub);
+                    br_k -= k_blok;
+                }
             }
-            else if(strcmp(c, "n\0") == 0)
+
+            printaj_sg(sg);
+            printf("Unesite ID grupe: ");
+            fgets(c, sizeof(c), stdin);
+            c[strlen(c)-1] = '\0';
+            unsigned int izbor = strtol(c, NULL, 10);
+
+            while(dohvati_sgime(&izbor, &n_usr, sg) < 0)
             {
-                break;
-            }
-            else
-            {
-                printf("Nevažeći unos...  [d] - DA, [n] - NE\n: ");
+                printf("Nevažeći unos...Pokušajte ponovno...\n: ");
                 fgets(c, sizeof(c), stdin);
                 c[strlen(c)-1] = '\0';
+                izbor = strtol(c, NULL, 10);
+            }
+            oslobodi_g(sg);
+            break;
+        }
+        else if(strcmp(c, "n\0") == 0)
+        {
+            printf("Unesite ime nove grupe...\n: ");
+            fgets(c, sizeof(c), stdin);
+            c[strlen(c)-1] = '\0';
+
+            strcpy(n_usr.g.ime, c);
+            n_usr.g.id = (sb->grp_id + 1);
+            sb->grp_id++;
+            break;
+        }
+        else
+        {
+            printf("Nevažeći unos...  [d] - DA, [n] - NE\n: ");
+            fgets(c, sizeof(c), stdin);
+            c[strlen(c)-1] = '\0';
+        }
+    }
+
+    br_k = (k.tok_podataka.velicina/sizeof(user));
+
+    if((br_k + 1) <= (k_blok * br_blokova))
+    {
+        unsigned int i = k_blok;
+        citaj_sa_diska(inode_block(&k, (br_blokova - 1)), &dsb);
+        i *= br_blokova;
+        i -= br_k;
+        i = (k_blok - i);
+        memcpy(dsb + (i * sizeof(user)), &n_usr, sizeof(user));
+        pisi_na_disk(inode_block(&k, (br_blokova - 1)), &dsb);//    pisanje podataka
+
+        k.tok_podataka.velicina = ((br_k + 1) * sizeof(user));
+        postavi_vrimem(&k);
+
+        memcpy(dsb, &k, sizeof(inode));
+        pisi_na_disk((sb->bmap.inode_start + 1), &dsb);//   pisanje novo stanje inode
+        memcpy(dsb, sb, sizeof(superblock));
+        pisi_na_disk(0, &dsb);//    pisanje novo stanje superbloka
+
+        return 1;
+    }
+
+    else
+    {
+
+        ds_adresa dsa, i;
+
+        for(i = sb->bmap.dsa; i < sb->bmap.inode_start; i++)
+        {
+            citaj_sa_diska(i, &dsb);
+            if((dsa = slobodni_prostor(&sb->bmap, &dsb, &i)) != 0)
+            {
+                if(inode_postavi_a(&k, dsa, &sb->bmap) > 0)
+                {
+                    sb->bmap.obradi(&sb->bmap, zauzmi_bit, &dsb, &dsa);
+                    pisi_na_disk(i, &dsb);
+                    sb->koristeni_blokovi++;
+
+                    nulblock(&dsb);
+                    memcpy(dsb, &n_usr, sizeof(user));
+                    pisi_na_disk(dsa, &dsb);
+
+                    k.tok_podataka.velicina = ((br_k + 1) * sizeof(user));
+                    memcpy(dsb, &k, sizeof(inode));
+                    pisi_na_disk((sb->bmap.inode_start + 1), &dsb);//   pisanje novo stanje inode
+
+                    memcpy(dsb, sb, sizeof(superblock));
+                    pisi_na_disk(0, &dsb);//    pisanje novo stanje superbloka
+
+                    k.tok_podataka.velicina = ((br_k + 1) * sizeof(user));
+                    return 1;
+                }
             }
         }
 
+        printf("Nema više prostora...\n");
+        return -3;
     }
-/*
-    dsa = inode_podatke(&k);
-
-    usr = (user*)malloc()*///   <------------------------------------------------------
 }
 
 void mjenjaj_udat(superblock *sb, inode *node, user *usr, unsigned long *nova_velicina)
