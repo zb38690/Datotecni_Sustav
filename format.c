@@ -106,6 +106,7 @@ void postavi_root(superblock *sb)
     strcpy(d.ime_roditelj, ime);
     d.br_tren = d.br_roditelj;
     strcpy(d.ime_tren, d.ime_roditelj);
+    d.head = NULL;
 
     root.tok_podataka.direktni[0] = sb->bmap.prostor_start + 1;
 
@@ -116,7 +117,7 @@ void postavi_root(superblock *sb)
     users.tok_podataka.velicina = sizeof(user);
 
     usr.br_inode = users.inode_br;
-    strcpy(usr.ime_inode, "users\0");
+    strcpy(usr.ime_inode, "korisnici\0");
     usr.next = NULL;
     d.head = &usr;
 

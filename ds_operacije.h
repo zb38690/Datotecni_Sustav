@@ -16,7 +16,9 @@ void kreiraj_dat();
 ds_adresa kreiraj_dir(superblock*, user*, dir*);
 
 void citaj_dat();
-void citaj_dir();
+int citaj_dir(inode*, dir*);
+
+void oslobodi_dir(dir*);
 
 static void pohrani_dat();
 static void pohrani_dir(inode*, dir*);
@@ -28,4 +30,9 @@ void preimenuj_dat();
 void preimenuj_dir();
 
 void mjenjaj_udat(superblock*, inode*, user*, unsigned long*);
+
+void printaj_pomoc();
+void listaj(dir*);
+void listaj_sve(bitmap*, dir*);
+static user *dohvati_svek(bitmap*);
 #endif // DS_OPERACIJE_H_INCLUDED

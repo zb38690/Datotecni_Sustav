@@ -73,7 +73,7 @@ void print_all(dir *d)
     }
 }
 
-int add(dir *d, int inode_br, char *inode_ime)
+int add(dir *d, unsigned int inode_br, char *inode_ime)
 {
     dir_ele *ptr, *tmp, *tmp2;
     ptr = (dir_ele*)malloc(sizeof(dir_ele));

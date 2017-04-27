@@ -62,7 +62,7 @@
 
 1492688563 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/global.h
 
-1490724601 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/meni.c
+1493291100 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/meni.c
 	"meni.h"
 
 1489164971 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/meni.h
@@ -72,7 +72,7 @@
 	"disk_simulator.h"
 	<string.h>
 
-1493159815 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/Main.c
+1493322286 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/Main.c
 	"meni.h"
 	<limits.h>
 	<time.h>
@@ -95,7 +95,7 @@
 	"bitmap.h"
 	"inode.h"
 
-1492978926 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/inode.h
+1493308560 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/inode.h
 	"global.h"
 	"podatkovni_tok.h"
 	"user.h"
@@ -110,7 +110,7 @@
 1489769790 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/blokovni_tok.h
 	"ds_adresa.h"
 
-1493150832 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/format.c
+1493297781 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/format.c
 	"format.h"
 
 1491669426 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/format.h
@@ -126,33 +126,34 @@
 1492620463 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/bitmap.c
 	"bitmap.h"
 
-1492958866 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/user.h
+1493322261 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/user.h
 	"global.h"
 	<stddef.h>
+	"bitmap.h"
 
-1493158889 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/ds_operacije.c
+1493324607 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/ds_operacije.c
 	"ds_operacije.h"
 
-1492954985 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/ds_operacije.h
+1493321825 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/ds_operacije.h
 	<stdio.h>
 	"direktorij.h"
 	"inode.h"
 	"SuperBlock.h"
 
-1492700293 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/direktorij.h
+1493302617 /home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/direktorij.h
 	"global.h"
 	<stddef.h>
 
-1493151745 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/inode.c
+1493309028 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/inode.c
 	"inode.h"
 
-1492700350 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/direktorij.c
+1493302448 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/direktorij.c
 	"direktorij.h"
 
 1492680508 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/podatkovni_tok.c
 	"podatkovni_tok.h"
 
-1492971206 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/user.c
+1493323726 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/user.c
 	"user.h"
 
 1493142758 source:/home/zdravko/stari_home/zdravko/Documents/codeblocks/projects/Datotecni_Sustav/bzvz.c

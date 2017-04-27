@@ -4,13 +4,15 @@
 #include "format.h"
 #include "direktorij.h"
 
-void fn(inode *node, ds_adresa *dsa)
+void printaj_putanju(user *kor, char *put)
 {
-    int i;
-    for(i = 0; i < 12; i++)
-        *(dsa+i) = node->tok_podataka.direktni[i];
+    printf("%s@%s:%s ", kor->u.ime, kor->g.ime, put);
 }
 
+void test_start()
+{
+    init_disk("test\0");
+}
 int main()
 {/*
     user u[5], *pnt;
@@ -337,7 +339,14 @@ while(true)
     uinit_disk();*/
 
 //printf("%lli\n%llu\n", LONG_MAX, ULONG_MAX);
-/*
+    superblock sb;
+    user korisnik;
+    char *path, cmd[MAX_CHAR_LENGTH];
+    dir poz;
+
+    test_start();///    MAKNUT
+    goto TEST_END;///   MAKNUT
+
     if(g_meni() == 1)
     {
         if(!meni_1())// koristi postojeci
@@ -346,6 +355,28 @@ while(true)
             return -1;
         }
 
+TEST_END:///    MAKNUT
+
+        if(formatiran())
+        {
+            ds_block dsb;
+            inode node;
+
+            citaj_sa_diska(0, &dsb);
+            memcpy(&sb, dsb, sizeof(superblock));//                     superblock
+
+            citaj_sa_diska(sb.bmap.inode_start, &dsb);
+            memcpy(&node, dsb, sizeof(inode));
+            citaj_sa_diska(node.tok_podataka.direktni[0], &dsb);
+            memcpy(&poz, dsb, sizeof(dir));//                           root direktorij
+            poz.head = NULL;
+
+
+            citaj_sa_diska(sb.bmap.inode_start + 1, &dsb);
+            memcpy(&node, dsb, sizeof(inode));
+            citaj_sa_diska(node.tok_podataka.direktni[0], &dsb);
+            memcpy(&korisnik, dsb + sizeof(user), sizeof(user));//  korisnik
+        }
     }
     else
     {
@@ -355,9 +386,7 @@ while(true)
            return -1;
         }
         char c[MAX_CHAR_LENGTH];
-        user novi, tmp;
-        inode users;
-        superblock sb;
+        inode node;
         ds_block dsb;
 
         format();
@@ -369,32 +398,81 @@ while(true)
 
         fgets(c, sizeof(c), stdin);
         c[strlen(c)-1] = '\0';
-        strcpy(novi.u.ime, c);
+        strcpy(korisnik.u.ime, c);
         sb.usr_id++;
-        novi.u.id = sb.usr_id;
+        korisnik.u.id = sb.usr_id;
 
         printf("Unesite ime grupe: ");
         fgets(c, sizeof(c), stdin);
         c[strlen(c)-1] = '\0';
-        strcpy(novi.g.ime, c);
+        strcpy(korisnik.g.ime, c);
         sb.grp_id++;
-        novi.g.id = sb.grp_id;
+        korisnik.g.id = sb.grp_id;
+
+        citaj_sa_diska(sb.bmap.inode_start, &dsb);
+        memcpy(&node, dsb, sizeof(inode));
+        citaj_sa_diska(node.tok_podataka.direktni[0], &dsb);
+        memcpy(&poz, dsb, sizeof(dir));
+        poz.head = NULL;
 
         citaj_sa_diska((sb.bmap.inode_start + 1), &dsb);
-        memcpy(&users, dsb, sizeof(inode));
-        citaj_sa_diska(users.tok_podataka.direktni[0], &dsb);
-        memcpy(dsb + sizeof(user), &novi, sizeof(user));
-        users.tok_podataka.velicina = (2*sizeof(user));
+        memcpy(&node, dsb, sizeof(inode));
+        citaj_sa_diska(node.tok_podataka.direktni[0], &dsb);
+        memcpy(dsb + sizeof(user), &korisnik, sizeof(user));
+        node.tok_podataka.velicina = (2*sizeof(user));
 
-        pisi_na_disk(users.tok_podataka.direktni[0], &dsb);
+        pisi_na_disk(node.tok_podataka.direktni[0], &dsb);
 
-        memcpy(dsb, &users, sizeof(inode));
+        memcpy(dsb, &node, sizeof(inode));
         pisi_na_disk((sb.bmap.inode_start + 1), &dsb);
 
         memcpy(dsb, &sb, sizeof(superblock));
         pisi_na_disk(0, &dsb);
     }
-    uinit_disk();*/
+
+    path = (char*)malloc(3 * sizeof(char));
+
+    if(path)
+    {
+        strcpy(path, "/$\0");
+    }
+    else
+    {
+        printf("Došlo je do greške...\n");
+        uinit_disk();
+        return -2;
+    }
+
+    citaj_dir(&sb.root_direktorij, &poz);
+
+    printaj_putanju(&korisnik, path);
+    fgets(cmd, sizeof(cmd), stdin);
+    cmd[strlen(cmd)-1] = '\0';
+
+    while(strcmp(cmd, "izlaz\0") != 0)
+    {
+
+        if(strcmp(cmd, "pomoc\0") == 0)
+        {
+            printaj_pomoc();
+        }
+        else if(strcmp(cmd, "listaj\0") == 0)
+        {
+            listaj(&poz);
+        }
+        else if(strcmp(cmd, "listaj_sve\0") == 0)
+        {
+            listaj_sve(&sb.bmap, &poz);
+        }
+
+        printaj_putanju(&korisnik, path);
+        fgets(cmd, sizeof(cmd), stdin);
+        cmd[strlen(cmd)-1] = '\0';
+    }
+
+    oslobodi_dir(&poz);
+    free(path);
+    uinit_disk();
 /*
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);

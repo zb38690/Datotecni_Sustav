@@ -140,6 +140,29 @@ void postavi_mod_oi(inode *node, bool everyone_x)
         node->mode &= 511;// -->        BIN 011 111 111 1
 }
 
+void printaj_mod(inode *node)
+{
+    short i;
+
+    for(i = 0; i < 10; i++)
+    {
+        if(node->mode & (int)pow(2, i))
+        {
+            if(i == 0)
+                printf("d");
+            else if((i == 1) || (i == 4) || (i == 7))
+                printf("r");
+            else if((i == 2) || (i == 5) || (i == 8))
+                printf("w");
+            else
+                printf("x");
+        }
+        else
+            printf("-");
+    }
+    printf(" ");
+}
+
 ds_adresa *inode_podatke(inode *node)
 {
     unsigned int br_bloka;

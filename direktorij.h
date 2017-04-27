@@ -4,7 +4,7 @@
 #include <stddef.h>
 struct
 {
-    int (*dodaj)(struct dir*, int, char*);
+    int (*dodaj)(struct dir*, unsigned int, char*);
     void (*ispisi)(struct dir*);
     void (*brisi_sve)(struct dir*);
     unsigned int (*brisi_ele)(struct dir*, char*);
@@ -31,6 +31,6 @@ struct
 static void clear_all(dir*);
 static unsigned int clear_ele(dir*, char*);
 static void print_all(dir*);
-static int add(dir*, int, char*);
+static int add(dir*, unsigned int, char*);
 void init_dir_op(dir_op*);
 #endif // DIREKTORIJ_H_INCLUDED

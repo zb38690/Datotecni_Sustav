@@ -38,6 +38,8 @@ void postavi_mod_oc(inode*, bool); // ostali cita
 void postavi_mod_op(inode*, bool); // ostali pise
 void postavi_mod_oi(inode*, bool); // ostali izvrsi
 
+void printaj_mod(inode*);
+
 ds_adresa *inode_podatke(inode*);
 ds_adresa inode_block(inode*, unsigned int);
 int inode_postavi_a(inode*, ds_adresa, bitmap*);

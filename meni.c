@@ -35,7 +35,7 @@ bool meni_1()
 
     if(ime)
     {
-        printf("Uspješna inicijalizacija diska...\n");
+        printf("Uspješna inicijalizacija diska...\n\n");
         free(ime);
         return true;
     }
