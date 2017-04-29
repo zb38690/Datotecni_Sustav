@@ -238,7 +238,7 @@ ds_adresa kreiraj_dir(superblock *sb, user *usr, dir *d)
         }
         if((a_inode != 0) && (a_data != 0))
         {
-            inode i_novi;
+            inode i_novi, i_rod;
             dir d_novi;
             dir_op op;
             char ime[MAX_CHAR_LENGTH];
@@ -247,6 +247,7 @@ ds_adresa kreiraj_dir(superblock *sb, user *usr, dir *d)
 
             init_inode(&i_novi, usr, (a_inode - sb->bmap.inode_start), d->br_tren, je_dir);
             i_novi.tok_podataka.direktni[0] = a_data;
+            i_novi.tok_podataka.velicina = sizeof(dir);
 
             printf("Upišite ime novog direktorija: ");
             fgets(ime, sizeof(ime), stdin);
@@ -271,16 +272,71 @@ ds_adresa kreiraj_dir(superblock *sb, user *usr, dir *d)
             strcpy(d_novi.ime_tren, ime);
             d_novi.head = NULL;
 
+            citaj_sa_diska(sb->bmap.inode_start + d->br_tren, &dsb);
+            memcpy(&i_rod, dsb, sizeof(inode));
+
+            if((i_rod.tok_podataka.velicina + sizeof(dir_ele)) < (ceil((float)i_rod.tok_podataka.velicina/sizeof(ds_block)) * sizeof(ds_block)))
+            {
+                i_rod.tok_podataka.velicina += sizeof(dir_ele);
+                pohrani_dir(&i_rod, d);
+
+                citaj_sa_diska(bmap_bloka(&(sb->bmap), &a_inode), &dsb);
+                sb->bmap.obradi(&(sb->bmap), zauzmi_bit, &dsb, &a_inode);
+                pisi_na_disk(bmap_bloka(&(sb->bmap), &a_inode), &dsb);
+
+                citaj_sa_diska(bmap_bloka(&(sb->bmap), &a_data), &dsb);
+                sb->bmap.obradi(&(sb->bmap), zauzmi_bit, &dsb, &a_data);
+                pisi_na_disk(bmap_bloka(&(sb->bmap), &a_data), &dsb);
+
+            }
+            else
+            {
+                ds_adresa dsa;
+                ds_block dsb;
+                unsigned int i;
+
+                citaj_sa_diska(bmap_bloka(&(sb->bmap), &a_data), &dsb);
+                sb->bmap.obradi(&(sb->bmap), zauzmi_bit, &dsb, &a_data);
+                pisi_na_disk(bmap_bloka(&(sb->bmap), &a_data), &dsb);
+
+                for(i = sb->bmap.dsa; i < sb->bmap.inode_start; i++)
+                {
+                    citaj_sa_diska(i, &dsb);
+
+                    if((dsa = slobodni_prostor(&(sb->bmap), &dsb, &i)) > 0)
+                    {
+                        if(inode_postavi_a(&i_rod, dsa, &(sb->bmap)) > 0)
+                        {
+                            pohrani_dir(&i_rod, d);
+
+                            citaj_sa_diska(bmap_bloka(&(sb->bmap), &a_inode), &dsb);
+                            sb->bmap.obradi(&(sb->bmap), zauzmi_bit, &dsb, &a_inode);
+                            pisi_na_disk(bmap_bloka(&(sb->bmap), &a_inode), &dsb);
+                            break;
+                        }
+                        else
+                        {
+                            citaj_sa_diska(bmap_bloka(&(sb->bmap), &a_data), &dsb);
+                            sb->bmap.obradi(&(sb->bmap), oslobodi_bit, &dsb, &a_data);
+                            pisi_na_disk(bmap_bloka(&(sb->bmap), &a_data), &dsb);
+                            return 0;
+                        }
+                    }
+                    else
+                    {
+                        citaj_sa_diska(bmap_bloka(&(sb->bmap), &a_data), &dsb);
+                        sb->bmap.obradi(&(sb->bmap), oslobodi_bit, &dsb, &a_data);
+                        pisi_na_disk(bmap_bloka(&(sb->bmap), &a_data), &dsb);
+                        return 0;
+                    }
+                }
+            }
+
             memcpy(dsb, &i_novi, sizeof(inode));
             pisi_na_disk(a_inode, &dsb);
 
             memcpy(dsb, &d_novi, sizeof(dir));
             pisi_na_disk(a_data, &dsb);
-
-            citaj_sa_diska(a_bmap, &dsb);
-            sb->bmap.obradi(&(sb->bmap), zauzmi_bit, &dsb, &a_inode);
-            sb->bmap.obradi(&(sb->bmap), zauzmi_bit, &dsb, &a_data);
-            pisi_na_disk(a_bmap, &dsb);
 
             return a_inode;
         }
@@ -291,9 +347,45 @@ ds_adresa kreiraj_dir(superblock *sb, user *usr, dir *d)
     return 0;
 }
 
-void pohrani_dir(inode *n, dir *d)
+static void pohrani_dir(inode *n, dir *d)
 {
+    ds_block dsb;
+    dir_ele *tmp = d->head, test;
+    unsigned int br_blokova;
+    unsigned int i, br_deleub = ((sizeof(ds_block) - sizeof(dir)) / sizeof(dir_ele)), br_dele = ((n->tok_podataka.velicina - sizeof(dir)) / sizeof(dir_ele));
+    nulblock(&dsb);
+    memcpy(dsb, d, sizeof(dir));
 
+    br_blokova = ceil((float)n->tok_podataka.velicina/sizeof(ds_block));
+
+
+
+    for(i = 0; (i < br_deleub) && (i < br_dele); i++)
+    {
+        memcpy(dsb + (sizeof(dir) + (i * sizeof(dir_ele))), tmp, sizeof(dir_ele));
+        tmp = tmp->next;
+    }
+
+    for(i = 0; (i < br_deleub) && (i < br_dele); i++)
+    {
+        memcpy(&test, dsb + (sizeof(dir) + (i * sizeof(dir_ele))), sizeof(dir_ele));
+        printf("%d - %s\n", test.br_inode, test.ime_inode);
+    }
+
+    pisi_na_disk(n->tok_podataka.direktni[0], &dsb);
+
+    br_deleub = sizeof(ds_block) / sizeof(dir_ele);
+
+    for(i = 1; i < br_blokova; i++)
+    {
+        unsigned int j;
+        for(j = 0; (j < br_deleub) && (j < br_dele); j++)
+        {
+            memcpy(dsb + (j * sizeof(dir_ele)), tmp, sizeof(dir_ele));
+            tmp = tmp->next;
+        }
+        pisi_na_disk(inode_block(n, i), &dsb);
+    }
 }
 
 void printaj_pomoc()
@@ -303,7 +395,7 @@ void printaj_pomoc()
     printf("|---------------------------------------------------------------------------|\n");
     printf("|listaj      -       ispisuje datoteke i direktorije                        |\n");
     printf("|listaj_sve  -       ispisuje datoteke i direktorije s dodatnim informacija |\n");
-    printf("|izlaz       -       izlaz iz datotečnog sustava                            |\n");
+    printf("|izlaz       -       izlaz iz programa                                      |\n");
     printf("|pomoc       -       ispisuje ovaj prozor                                   |\n");
     printf("|___________________________________________________________________________|\n");
     printf("\n");
@@ -333,6 +425,10 @@ void listaj_sve(bitmap *bmap, dir *poz)
     user *svek = dohvati_svek(bmap);
     unsigned int br_k, i;
 
+    citaj_sa_diska(bmap->inode_start+1, &dsb);
+    memcpy(&node, dsb, sizeof(inode));
+    br_k = node.tok_podataka.velicina/sizeof(user);
+
     if(svek)
     {
         while(tmp != NULL)
@@ -341,7 +437,6 @@ void listaj_sve(bitmap *bmap, dir *poz)
             memcpy(&node, dsb, sizeof(inode));
 
             printaj_mod(&node);
-            br_k = node.tok_podataka.velicina/sizeof(user);
 
             for(i = 0; i < br_k; i++)
             {
@@ -449,6 +544,22 @@ int citaj_dir(inode *node, dir *d)
                 memcpy(&dele, dsb + (i * sizeof(dir_ele)), sizeof(dir_ele));
                 dop.dodaj(d, dele.br_inode, dele.ime_inode);
             }
+        }
+    }
+}
+
+void listaj_kor(superblock *sb)
+{
+    user *sve;
+    sve = dohvati_svek(&sb->bmap);
+
+    if(sve)
+    {
+        unsigned int i;
+
+        for(i = 0; i <= sb->usr_id; i++)
+        {
+            printf("%s@%s\n", sve[i].u.ime, sve[i].g.ime);
         }
     }
 }

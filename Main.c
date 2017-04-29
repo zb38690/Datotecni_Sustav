@@ -370,6 +370,7 @@ TEST_END:///    MAKNUT
             citaj_sa_diska(node.tok_podataka.direktni[0], &dsb);
             memcpy(&poz, dsb, sizeof(dir));//                           root direktorij
             poz.head = NULL;
+            citaj_dir(&node, &poz);
 
 
             citaj_sa_diska(sb.bmap.inode_start + 1, &dsb);
@@ -464,7 +465,38 @@ TEST_END:///    MAKNUT
         {
             listaj_sve(&sb.bmap, &poz);
         }
+        else if(strcmp(cmd, "listaj_kor") == 0)
+        {
+            listaj_kor(&sb);
+        }
+        else if(strcmp(cmd, "kreiraj_dir") == 0)
+        {
+            inode node_d;
+            ds_block dsb;
+            ds_adresa dsa;
+            dir_ele dele;
+            unsigned int br_blokova;
+            citaj_sa_diska(sb.bmap.inode_start + poz.br_tren, &dsb);
+            memcpy(&node_d, dsb, sizeof(inode));
 
+            br_blokova = ceil(((float)node_d.tok_podataka.velicina) / (sizeof(ds_block)));
+            if(kreiraj_dir(&sb, &korisnik, &poz, &dele) > 0)
+            {
+                postavi_vrimem(&node_d);
+                node_d.tok_podataka.velicina += sizeof(dir_ele);
+                memcpy(dsb, &node_d, sizeof(inode));
+                pisi_na_disk(sb.bmap.inode_start + poz.br_tren, &dsb);
+            }
+            else
+            {
+                printf("Greška u dodavanju direktorija...\n");
+            }
+
+        }
+        else
+        {
+            printf("Nepostojeća naredba...\nUnesite 'pomoc' za ispisivanje naredbih...\n");
+        }
         printaj_putanju(&korisnik, path);
         fgets(cmd, sizeof(cmd), stdin);
         cmd[strlen(cmd)-1] = '\0';
@@ -473,11 +505,7 @@ TEST_END:///    MAKNUT
     oslobodi_dir(&poz);
     free(path);
     uinit_disk();
-/*
-    time_t t = time(NULL);
-    struct tm tm = *localtime(&t);
-    printf("%d.%d.%d %d:%d:%d\n", tm.tm_mday, tm.tm_mon+1, tm.tm_year+1900, tm.tm_hour, tm.tm_min, tm.tm_sec);
-    printf("%d\n", sizeof(long));*/
+
     return(0);
 
 }

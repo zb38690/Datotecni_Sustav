@@ -68,7 +68,7 @@ void print_all(dir *d)
 
     while(tmp != NULL)
     {
-        printf("%d : %s\n", tmp->br_inode, tmp->ime_inode);
+        printf("%s\n", tmp->ime_inode);
         tmp = tmp->next;
     }
 }
@@ -82,6 +82,7 @@ int add(dir *d, unsigned int inode_br, char *inode_ime)
     strcpy(ptr->ime_inode, inode_ime);
     ptr->next = NULL;
 
+//    printf("%s", d->head->ime_inode);
     if(ptr)
     {
         if(d->head == NULL)
