@@ -15,8 +15,6 @@ struct
    unsigned long max_velicina;
    int magic2;
    bitmap bmap;
-   //ds_adresa slobodni_inode;
-   //ds_adresa slobodni_prostor;
    unsigned int usr_id;
    unsigned int grp_id;
    inode root_direktorij;

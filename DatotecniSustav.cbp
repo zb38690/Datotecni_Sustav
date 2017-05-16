@@ -72,6 +72,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="podatkovni_tok.h" />
+		<Unit filename="putanja.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="putanja.h" />
 		<Unit filename="user.c">
 			<Option compilerVar="CC" />
 		</Unit>

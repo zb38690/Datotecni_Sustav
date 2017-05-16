@@ -6,6 +6,7 @@ void init_dir_op(dir_op *dop)
     dop->ispisi = print_all;
     dop->brisi_sve = clear_all;
     dop->brisi_ele = clear_ele;
+    dop->dohvati_ele = get_element;
 }
 /*
 void add_end(dir *d, int inode_br, char *inode_ime)
@@ -68,7 +69,7 @@ void print_all(dir *d)
 
     while(tmp != NULL)
     {
-        printf("%s\n", tmp->ime_inode);
+        printf("%i - %s\n", tmp->br_inode, tmp->ime_inode);
         tmp = tmp->next;
     }
 }
@@ -180,4 +181,22 @@ unsigned int clear_ele(dir *d, char *ime)
             return 0;
         }
     }
+}
+
+struct dir_element get_element(dir *poz, unsigned int inode_br)
+{
+    dir_ele dele, *tmp;
+    unsigned int i;
+
+    tmp = poz->head;
+
+    while(tmp != NULL)
+    {
+        if(inode_br == tmp->br_inode)
+        {
+            return *tmp;
+        }
+    }
+
+    return *tmp;
 }

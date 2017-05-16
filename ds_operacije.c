@@ -226,12 +226,12 @@ ds_adresa kreiraj_dir(superblock *sb, user *usr, dir *d)
 
     while(a_bmap < sb->bmap.inode_start)
     {
-        if(a_inode == 0)
+        if((a_inode == 0) && (a_bmap <= bmap_bloka(&(sb->bmap), &(sb->bmap.prostor_start))))
         {
             citaj_sa_diska(a_bmap, &dsb);
             a_inode = slobodni_inode(&(sb->bmap), &dsb, &a_bmap);
         }
-        if(a_data == 0)
+        if((a_data == 0) && (a_bmap >= bmap_bloka(&(sb->bmap), &(sb->bmap.prostor_start))))
         {
             citaj_sa_diska(a_bmap, &dsb);
             a_data = slobodni_prostor(&(sb->bmap), &dsb, &a_bmap);
@@ -287,7 +287,6 @@ ds_adresa kreiraj_dir(superblock *sb, user *usr, dir *d)
                 citaj_sa_diska(bmap_bloka(&(sb->bmap), &a_data), &dsb);
                 sb->bmap.obradi(&(sb->bmap), zauzmi_bit, &dsb, &a_data);
                 pisi_na_disk(bmap_bloka(&(sb->bmap), &a_data), &dsb);
-
             }
             else
             {
@@ -299,7 +298,7 @@ ds_adresa kreiraj_dir(superblock *sb, user *usr, dir *d)
                 sb->bmap.obradi(&(sb->bmap), zauzmi_bit, &dsb, &a_data);
                 pisi_na_disk(bmap_bloka(&(sb->bmap), &a_data), &dsb);
 
-                for(i = sb->bmap.dsa; i < sb->bmap.inode_start; i++)
+                for(i = bmap_bloka(&(sb->bmap), &(sb->bmap.prostor_start)) /*sb->bmap.dsa*/; i < sb->bmap.inode_start; i++)
                 {
                     citaj_sa_diska(i, &dsb);
 
@@ -346,7 +345,6 @@ ds_adresa kreiraj_dir(superblock *sb, user *usr, dir *d)
 
     return 0;
 }
-
 static void pohrani_dir(inode *n, dir *d)
 {
     ds_block dsb;
@@ -358,18 +356,10 @@ static void pohrani_dir(inode *n, dir *d)
 
     br_blokova = ceil((float)n->tok_podataka.velicina/sizeof(ds_block));
 
-
-
     for(i = 0; (i < br_deleub) && (i < br_dele); i++)
     {
         memcpy(dsb + (sizeof(dir) + (i * sizeof(dir_ele))), tmp, sizeof(dir_ele));
         tmp = tmp->next;
-    }
-
-    for(i = 0; (i < br_deleub) && (i < br_dele); i++)
-    {
-        memcpy(&test, dsb + (sizeof(dir) + (i * sizeof(dir_ele))), sizeof(dir_ele));
-        printf("%d - %s\n", test.br_inode, test.ime_inode);
     }
 
     pisi_na_disk(n->tok_podataka.direktni[0], &dsb);
@@ -395,6 +385,12 @@ void printaj_pomoc()
     printf("|---------------------------------------------------------------------------|\n");
     printf("|listaj      -       ispisuje datoteke i direktorije                        |\n");
     printf("|listaj_sve  -       ispisuje datoteke i direktorije s dodatnim informacija |\n");
+    printf("|listaj_kor  -       ispisuje sve korisnike                                 |\n");
+    printf("|kreiraj_dir -       stvaranje novog direktorija                            |\n");
+    printf("|mjenjaj_dir -       otvaranje direktorija                                  |\n");
+    printf("|kreiraj_kor -       stvaranje novog korisnika                              |\n");
+    printf("|mjenjaj_kor -       mjenjanje korisnika                                    |\n");
+    printf("|mjenjaj_mod -       mjenjanje prava                                        |\n");
     printf("|izlaz       -       izlaz iz programa                                      |\n");
     printf("|pomoc       -       ispisuje ovaj prozor                                   |\n");
     printf("|___________________________________________________________________________|\n");
@@ -449,12 +445,11 @@ void listaj_sve(bitmap *bmap, dir *poz)
 
 
             printf("%lu ", node.tok_podataka.velicina);
-//        printf("%d:%d %d.%d.%d ", (node.vrime_stvaranja>>27)&31,(node.vrime_stvaranja>>21)&63, (node.vrime_stvaranja >> 16)&31,(node.vrime_stvaranja >> 12)&15, node.vrime_stvaranja&4095);
             printf("%d:%d %d.%d.%d ", (node.vrime_mjenjanja>>27)&31,(node.vrime_mjenjanja>>21)&63, (node.vrime_mjenjanja >> 16)&31,(node.vrime_mjenjanja >> 12)&15, node.vrime_mjenjanja&4095);
             printf("%s\n", tmp->ime_inode);
             tmp = tmp->next;
         }
-        printf("\n");
+        //printf("\n");
         free(svek);
     }
 
@@ -516,6 +511,9 @@ int citaj_dir(inode *node, dir *d)
 
     if(v <= sizeof(ds_block))
     {
+        dir test;
+        memcpy(&test, dsb, sizeof(dir));
+
         for(i = 0; i < br_ele; i++)
         {
             memcpy(&dele, dsb + sizeof(dir) + (i * sizeof(dir_ele)), sizeof(dir_ele));
@@ -559,7 +557,264 @@ void listaj_kor(superblock *sb)
 
         for(i = 0; i <= sb->usr_id; i++)
         {
-            printf("%s@%s\n", sve[i].u.ime, sve[i].g.ime);
+            printf("%i - %s@%s\n", sve[i].u.id, sve[i].u.ime, sve[i].g.ime);
         }
+    }
+    else
+    printf("Došlo je do greške...\n");
+}
+
+void mjenjaj_kor(superblock *sb, user *usr)
+{
+    user *sve;
+    unsigned int x, i;
+    char c[MAX_CHAR_LENGTH];
+
+    sve = dohvati_svek(&sb->bmap);
+
+    if(sve)
+    {
+        listaj_kor(sb);
+        printf("\nUnesite broj korisnika:\n");
+        fgets(c, sizeof(c), stdin);
+        x = c[0] - '0';
+
+
+        for(i = 0; i <= sb->usr_id; i++)
+        {
+            if(x == sve[i].u.id)
+            {
+                usr->u.id = sve[i].u.id;
+                strcpy(usr->u.ime, sve[i].u.ime);
+                usr->g.id = sve[i].g.id;
+                strcpy(usr->g.ime, sve[i].g.ime);
+                return;
+            }
+        }
+        printf("Netočan unos...\n");
+
+    }
+}
+
+void mjenjaj_mod(superblock *sb, inode *node)
+{
+    unsigned int x;
+    char c[MAX_CHAR_LENGTH];
+
+
+    printf("\nUnesite novi mod ([0 - 7] [0 - 7] [0 - 7]):\n");
+    fgets(c, sizeof(c), stdin);
+    x = ((c[0] - '0') * 100) + ((c[1] - '0') * 10) + (c[2] - '0');
+
+    if((x >= 0) && (x <= 777))
+    {
+        unsigned short tmp, tmp2;
+        tmp = (short)x;
+
+        tmp2 = tmp%10;
+        tmp /= 10;
+
+        tmp2 = ((tmp%10) | (tmp2 << 3));
+        tmp /= 10;
+
+        tmp2 = ((tmp%10) | (tmp2 << 3));
+
+        tmp = node->mode;
+        tmp = (tmp & 1);
+        tmp2 = (tmp | (tmp2 << 1));
+
+        node->mode = tmp2;
+        return;
+    }
+
+    printf("Netočan unos...\n");
+}
+
+void mjenjaj_dir(superblock *sb, dir *poz, path **p, user *kor)
+{
+
+    char c[MAX_CHAR_LENGTH];
+    dir_ele *tmp = poz->head;
+    printf("Unesite ime direktorija\n: ");
+
+    fgets(c, sizeof(c), stdin);
+    c[strlen(c)-1] = '\0';
+
+    if(strcmp(c, "..\0") == 0)
+    {
+        unsigned int i, x;
+        inode node_d;
+        ds_block dsb;
+
+        dir roditej;
+        dir_op dop;
+
+        citaj_sa_diska((sb->bmap.inode_start + poz->br_roditelj), &dsb);
+        memcpy(&node_d, dsb, sizeof(inode));
+        citaj_sa_diska(node_d.tok_podataka.direktni[0], &dsb);
+        memcpy(&roditej, dsb, sizeof(dir));
+
+        init_dir_op(&dop);
+
+        poz->br_roditelj = roditej.br_roditelj;
+        poz->br_tren = roditej.br_tren;
+        strcpy(poz->ime_roditelj, roditej.ime_roditelj);
+        strcpy(poz->ime_tren, roditej.ime_tren);
+        dop.brisi_sve(poz);
+        poz->head = NULL;
+        citaj_dir(&node_d, poz);
+        path_brisi(p);
+
+        return;
+    }
+
+    while(tmp != NULL)
+    {
+        if(strcmp(tmp->ime_inode, c) == 0)
+        {
+            inode node_d;
+            ds_block dsb;
+            unsigned short msk;
+
+            citaj_sa_diska((sb->bmap.inode_start+tmp->br_inode), &dsb);
+            memcpy(&node_d, dsb, sizeof(inode));
+
+            if(node_d.mode & 1 == 1)
+            {
+                if(kor->u.id == node_d.korisnik_id)
+                {
+                    msk = 8;
+                }
+                else if(kor->g.id == node_d.grupa_id)
+                {
+                    msk = 64;
+                }
+                else
+                {
+                    msk = 512;
+                }
+
+                if(((msk & node_d.mode) != 0) || (kor->u.id == 0))
+                {
+                    if(path_dodaj(p, tmp->ime_inode) > 0)
+                    {
+                        dir_op dop;
+                        init_dir_op(&dop);
+
+                        poz->br_roditelj = poz->br_tren;
+                        poz->br_tren = tmp->br_inode;
+                        strcpy(poz->ime_roditelj, poz->ime_tren);
+                        strcpy(poz->ime_tren, tmp->ime_inode);
+                        dop.brisi_sve(poz);
+                        poz->head = NULL;
+                        citaj_dir(&node_d, poz);
+                    }
+                    else
+                    {
+                        printf("Greška u otvaranju direktorija...\n");
+                    }
+                }
+                else
+                {
+                    printf("Nemate pravo otvorit direktorij...\n");
+                }
+            }
+            else
+            {
+                printf("%s nije direktorij...\n", c);
+            }
+
+            return;
+        }
+        tmp = tmp->next;
+    }
+}
+
+void brisi_dir(superblock *sb, dir *d, user *kor)
+{
+    char c[MAX_CHAR_LENGTH];
+    dir_ele *tmp = d->head;
+    printf("Unesite ime direktorija kojega želite brisati...\n: ");
+
+    fgets(c, sizeof(c), stdin);
+    c[strlen(c)-1] = '\0';
+
+    while(tmp != NULL)
+    {
+        if(strcmp(tmp->ime_inode, c) == 0)
+        {
+            inode node_d;
+            ds_block dsb;
+            citaj_sa_diska((sb->bmap.inode_start + tmp->br_inode), &dsb);
+            memcpy(&node_d, dsb, sizeof(inode));
+
+            if((node_d.mode & 1) == 1)
+            {
+                unsigned short msk;
+
+                if(kor->u.id == node_d.korisnik_id)
+                {
+                    msk = 4;
+                }
+                else if(kor->g.id == node_d.grupa_id)
+                {
+                    msk = 32;
+                }
+                else
+                {
+                    msk = 256;
+                }
+
+                if(((msk & node_d.mode) != 0) || (kor->u.id == 0))
+                {
+                    if(node_d.tok_podataka.velicina > sizeof(dir))
+                    {
+                        printf("Direktorij nije prazan...\n");
+                    }
+                    else
+                    {
+                        ds_adresa *dsa, a_node;
+                        ds_block dsb;
+                        unsigned int br_blokova = ceil(((float)node_d.tok_podataka.velicina) / sizeof(ds_block));
+                        unsigned int i;
+                        dir_op dop;
+
+                        init_dir_op(&dop);
+
+                        dsa = inode_podatke(&node_d);
+
+                        for(i = 0; i < br_blokova; i++)
+                        {
+                            citaj_sa_diska(bmap_bloka(&(sb->bmap), &(dsa[i])), &dsb);
+                            sb->bmap.obradi(&(sb->bmap), oslobodi_bit, dsb, &(dsa[i]));
+                            pisi_na_disk(bmap_bloka(&(sb->bmap), &(dsa[i])), &dsb);
+                        }
+
+                        free(dsa);
+                        a_node = (sb->bmap.inode_start + node_d.inode_br);
+                        citaj_sa_diska(bmap_bloka(&(sb->bmap), &a_node), &dsb);
+                        sb->bmap.obradi(&(sb->bmap), oslobodi_bit, dsb, &a_node);
+                        pisi_na_disk(bmap_bloka(&(sb->bmap), &a_node), &dsb);
+
+                        dop.brisi_ele(d, c);
+
+                        citaj_sa_diska((sb->bmap.inode_start + d->br_tren), &dsb);
+                        memcpy(&node_d, dsb, sizeof(inode));
+                        node_d.tok_podataka.velicina -= sizeof(dir_ele);
+                        postavi_vrimem(&node_d);
+                        pohrani_dir(&node_d, d);
+
+                        memcpy(dsb, &node_d, sizeof(inode));
+                        pisi_na_disk((sb->bmap.inode_start + d->br_tren), &dsb);
+                    }
+                }
+                else
+                {
+                    printf("Nemate pravo brisat direktorij...\n");
+                }
+            }
+            return;
+        }
+        tmp = tmp->next;
     }
 }

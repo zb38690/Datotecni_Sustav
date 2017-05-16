@@ -69,8 +69,8 @@ ds_adresa slobodni_prostor(const bitmap *bmap, ds_block *dsb, const ds_adresa *d
 
     if((((*dsa) - bmap->dsa)* sizeof(ds_block) * 8) < bmap->prostor_start)
     {
-        unsigned int br_bajta = bmap->prostor_start / 8;
-        unsigned int poz_ubajtu = bmap->prostor_start - (br_bajta * 8);
+        unsigned int br_bajta = (bmap->prostor_start - (((*dsa) - bmap->dsa)* sizeof(ds_block) * 8)) / 8;
+        unsigned int poz_ubajtu = ((bmap->prostor_start - (((*dsa) - bmap->dsa)* sizeof(ds_block) * 8)) * 8) - (br_bajta * 8);
         unsigned int i;
         byte msk;
 
@@ -83,10 +83,10 @@ ds_adresa slobodni_prostor(const bitmap *bmap, ds_block *dsb, const ds_adresa *d
         (*dsb)[i] &=  maska[i] &= msk;
     }
 
-    if(((((*dsa) - bmap->dsa) * sizeof(ds_block) * 8) + ((sizeof(ds_block)) - 1)) > bmap->prostor_stop)
+    if(((((*dsa) - bmap->dsa) * sizeof(ds_block) * 8) + ((sizeof(ds_block) * 8) - 1)) > bmap->prostor_stop)
     {
-        unsigned int br_bajta = bmap->prostor_stop / 8;
-        unsigned int poz_ubajtu = bmap->prostor_stop - (br_bajta * 8);
+        unsigned int br_bajta = (bmap->prostor_stop - (((*dsa) - bmap->dsa) * sizeof(ds_block) * 8)) / 8;
+        unsigned int poz_ubajtu = (((*dsa) - bmap->dsa) * sizeof(ds_block) * 8) - (br_bajta * 8);
         unsigned int i = br_bajta;
         byte msk;
 
@@ -124,7 +124,7 @@ static void obradi_bmapu(bitmap *bmap, void(*fn_pntr)(byte *msk, byte *dsb_b), d
         byte b = (short)pow(2, poz_ubajtu);
 
 
-        while(br_bajta > sizeof(ds_block))
+        while(br_bajta >= sizeof(ds_block))
             br_bajta -= sizeof(ds_block);
 
         (*fn_pntr)(&b, &((*dsb)[br_bajta]));

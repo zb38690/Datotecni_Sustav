@@ -3,10 +3,12 @@
 #include <time.h>
 #include "format.h"
 #include "direktorij.h"
+#include "putanja.h"
 
-void printaj_putanju(user *kor, char *put)
+void printaj_putanju(user *kor, path *p)
 {
-    printf("%s@%s:%s ", kor->u.ime, kor->g.ime, put);
+    printf("%s@%s:", kor->u.ime, kor->g.ime);
+    path_printaj(p, kor);
 }
 
 void test_start()
@@ -205,7 +207,7 @@ while(true)
     ds_adresa dsa;
     unsigned int vp, bb, uub, i;
 
-    init_disk("blablabla");
+    init_disk("disk1");
 //    format();
 
     dsa = 0;
@@ -338,14 +340,11 @@ while(true)
 
     uinit_disk();*/
 
-//printf("%lli\n%llu\n", LONG_MAX, ULONG_MAX);
     superblock sb;
     user korisnik;
-    char *path, cmd[MAX_CHAR_LENGTH];
+    char cmd[MAX_CHAR_LENGTH];
+    path *put = NULL;
     dir poz;
-
-    test_start();///    MAKNUT
-    goto TEST_END;///   MAKNUT
 
     if(g_meni() == 1)
     {
@@ -354,9 +353,6 @@ while(true)
             uinit_disk();
             return -1;
         }
-
-TEST_END:///    MAKNUT
-
         if(formatiran())
         {
             ds_block dsb;
@@ -431,22 +427,9 @@ TEST_END:///    MAKNUT
         pisi_na_disk(0, &dsb);
     }
 
-    path = (char*)malloc(3 * sizeof(char));
-
-    if(path)
-    {
-        strcpy(path, "/$\0");
-    }
-    else
-    {
-        printf("Došlo je do greške...\n");
-        uinit_disk();
-        return -2;
-    }
-
     citaj_dir(&sb.root_direktorij, &poz);
 
-    printaj_putanju(&korisnik, path);
+    printaj_putanju(&korisnik, put);
     fgets(cmd, sizeof(cmd), stdin);
     cmd[strlen(cmd)-1] = '\0';
 
@@ -459,11 +442,63 @@ TEST_END:///    MAKNUT
         }
         else if(strcmp(cmd, "listaj\0") == 0)
         {
-            listaj(&poz);
+            inode node_d;
+            ds_block dsb;
+            unsigned short msk;
+            citaj_sa_diska(sb.bmap.inode_start + poz.br_tren, &dsb);
+            memcpy(&node_d, dsb, sizeof(inode));
+
+            if(korisnik.u.id == node_d.korisnik_id)
+            {
+                msk = 2;
+            }
+            else if(korisnik.g.id == node_d.grupa_id)
+            {
+                msk = 16;
+            }
+            else
+            {
+                msk = 128;
+            }
+
+            if(((msk & node_d.mode) != 0) || (korisnik.u.id == 0))
+            {
+                listaj(&poz);
+            }
+            else
+            {
+                printf("Nemate pravo čitat iz direktorija...\n");
+            }
         }
         else if(strcmp(cmd, "listaj_sve\0") == 0)
         {
-            listaj_sve(&sb.bmap, &poz);
+            inode node_d;
+            ds_block dsb;
+            unsigned short msk;
+            citaj_sa_diska(sb.bmap.inode_start + poz.br_tren, &dsb);
+            memcpy(&node_d, dsb, sizeof(inode));
+
+            if(korisnik.u.id == node_d.korisnik_id)
+            {
+                msk = 2;
+            }
+            else if(korisnik.g.id == node_d.grupa_id)
+            {
+                msk = 16;
+            }
+            else
+            {
+                msk = 128;
+            }
+
+            if(((msk & node_d.mode) != 0) || (korisnik.u.id == 0))
+            {
+                listaj_sve(&sb.bmap, &poz);
+            }
+            else
+            {
+                printf("Nemate pravo čitat iz direktorija...\n");
+            }
         }
         else if(strcmp(cmd, "listaj_kor") == 0)
         {
@@ -473,39 +508,160 @@ TEST_END:///    MAKNUT
         {
             inode node_d;
             ds_block dsb;
-            ds_adresa dsa;
-            dir_ele dele;
-            unsigned int br_blokova;
+            unsigned short msk;
             citaj_sa_diska(sb.bmap.inode_start + poz.br_tren, &dsb);
             memcpy(&node_d, dsb, sizeof(inode));
 
-            br_blokova = ceil(((float)node_d.tok_podataka.velicina) / (sizeof(ds_block)));
-            if(kreiraj_dir(&sb, &korisnik, &poz, &dele) > 0)
+            if(korisnik.u.id == node_d.korisnik_id)
             {
-                postavi_vrimem(&node_d);
-                node_d.tok_podataka.velicina += sizeof(dir_ele);
-                memcpy(dsb, &node_d, sizeof(inode));
-                pisi_na_disk(sb.bmap.inode_start + poz.br_tren, &dsb);
+                msk = 4;
+            }
+            else if(korisnik.g.id == node_d.grupa_id)
+            {
+                msk = 32;
             }
             else
             {
-                printf("Greška u dodavanju direktorija...\n");
+                msk = 256;
             }
 
+            if(((msk & node_d.mode) != 0) || (korisnik.u.id == 0))
+            {
+                if(kreiraj_dir(&sb, &korisnik, &poz) > 0)
+                {
+                    postavi_vrimem(&node_d);
+                    node_d.tok_podataka.velicina += sizeof(dir_ele);
+                    memcpy(dsb, &node_d, sizeof(inode));
+                    pisi_na_disk(sb.bmap.inode_start + poz.br_tren, &dsb);
+                }
+                else
+                {
+                    printf("Greška u dodavanju direktorija...\n");
+                }
+            }
+            else
+            {
+                printf("Nemate pravo kreirat direktorij...\n");
+            }
+        }
+        else if(strcmp(cmd, "mjenjaj_dir") == 0)
+        {
+            mjenjaj_dir(&sb, &poz, &put, &korisnik);
+        }
+        else if(strcmp(cmd, "brisi_dir") == 0)
+        {
+            brisi_dir(&sb, &poz, &korisnik);
+        }
+        else if(strcmp(cmd, "kreiraj_kor") == 0)
+        {
+            dodaj_korisnika(&sb);
+        }
+        else if(strcmp(cmd, "mjenjaj_kor") == 0)
+        {
+            mjenjaj_kor(&sb, &korisnik);
+        }
+        else if(strcmp(cmd, "mjenjaj_mod") == 0)
+        {
+            inode node;
+            unsigned int x;
+            char c[MAX_CHAR_LENGTH], *ptr;
+            ds_block dsb;
+
+            listaj(&poz);
+
+            printf("\nUnesite i-node broj:\n");
+            fgets(c, sizeof(c), stdin);
+            x = (unsigned int)strtol(c, &ptr, 10);
+
+            citaj_sa_diska(sb.bmap.inode_start + x, &dsb);
+            memcpy(&node, dsb, sizeof(inode));
+
+            if(node.magic == INODE_MAGIC)
+            {
+                unsigned short msk;
+
+                if(korisnik.u.id == node.korisnik_id)
+                {
+                    msk = 4;
+                }
+                else if(korisnik.g.id == node.grupa_id)
+                {
+                    msk = 32;
+                }
+                else
+                {
+                    msk = 256;
+                }
+
+                if(((msk & node.mode) != 0) || (korisnik.u.id == 0))
+                {
+                    mjenjaj_mod(&sb, &node);
+                }
+                else
+                {
+                    printf("Nemate pravo mjenjat prava...\n");
+                }
+            }
+            memcpy(dsb, &node, sizeof(inode));
+            pisi_na_disk(sb.bmap.inode_start + x, &dsb);
+        }
+        else if(strcmp(cmd, "dir") == 0)
+        {
+            printf("br_tren: %d - ime_tren:%s\n", poz.br_tren, poz.ime_tren);
+            printf("br_roditelj: %d - ime_roditelj:%s\n", poz.br_roditelj, poz.ime_roditelj);
         }
         else
         {
             printf("Nepostojeća naredba...\nUnesite 'pomoc' za ispisivanje naredbih...\n");
         }
-        printaj_putanju(&korisnik, path);
+        printaj_putanju(&korisnik, put);
         fgets(cmd, sizeof(cmd), stdin);
         cmd[strlen(cmd)-1] = '\0';
     }
 
     oslobodi_dir(&poz);
-    free(path);
+    path_oslobodi(put);
     uinit_disk();
+
+/*    int x = 1;
+    path *p = NULL;
+    char c[MAX_CHAR_LENGTH], *ptr;
+
+    while(x != 0)
+    {
+        printf("1: dodaj...\n");
+        printf("2: brisi...\n");
+        printf("3: printaj...\n");
+        printf(": ");
+
+        fgets(c, sizeof(c), stdin);
+        x = strtol(c, &ptr, 10);
+
+        switch(x)
+        {
+            case 1:
+                printf("Unesi ime: ");
+                fgets(c, sizeof(c), stdin);
+                c[strlen(c)-1] = '\0';
+                path_dodaj(&p, c);
+                break;
+            case 2:
+                path_brisi(&p);
+                break;
+            case 3:
+                path_printaj(p);
+                break;
+            case 0:
+                //path_oslobodi(p);
+                break;
+
+        }
+    }
+
+    path_oslobodi(p);*/
+
 
     return(0);
 
 }
+

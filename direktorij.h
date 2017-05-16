@@ -8,6 +8,8 @@ struct
     void (*ispisi)(struct dir*);
     void (*brisi_sve)(struct dir*);
     unsigned int (*brisi_ele)(struct dir*, char*);
+    struct dir_element (*dohvati_ele)(struct dir*, unsigned int);
+
 }typedef dir_op;
 
 typedef struct dir_element
@@ -32,5 +34,6 @@ static void clear_all(dir*);
 static unsigned int clear_ele(dir*, char*);
 static void print_all(dir*);
 static int add(dir*, unsigned int, char*);
+static struct dir_element get_element(dir*, unsigned int);
 void init_dir_op(dir_op*);
 #endif // DIREKTORIJ_H_INCLUDED
